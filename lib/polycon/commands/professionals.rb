@@ -36,7 +36,16 @@ module Polycon
         ]
 
         def call(name: nil)
-          warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            professional = Models::Professionals.get_professional(name)
+            professional.delete
+          rescue SystemCallError
+            warn "ERROR: El profesional #{name} posee turnos, por lo que no se puede eliminar"
+          rescue StandardError => e
+            warn e.message
+          else
+            puts "Se ha eliminado el profesional #{name}"
+          end
         end
       end
 
@@ -55,7 +64,6 @@ module Polycon
           else
             puts professionals
           end
-          #warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 

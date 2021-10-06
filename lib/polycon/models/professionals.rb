@@ -9,9 +9,11 @@ module Polycon
 
             def self.get_professional(name)
                 #Devuelve un objeto profesional en base al nombre recibido por parametro si existe una carpeta con ese nombre
-                #caso contrario retorna nil
+                #caso contrario retorna un StandardError con el mensaje "Profesional no encontrado"
                 if Dir.exist?(Polycon::Utils.path << "/#{name}")
                     new(name) 
+                else
+                    raise StandardError.new("ERROR: No se encontró el profesional #{name}")
                 end
             end
             
@@ -25,14 +27,12 @@ module Polycon
                 Dir.empty?(Polycon::Utils.path << "/#{@name}")
             end
 
-            def delete_profesional
-                #Elimina la carpeta del profesional, no debe tener turnos
-                if Dir.empty?(Polycon::Utils.path << "/#{@name}")
-                    Dir.delete(Polycon::Utils.path << "/#{@name}")
-                end
+            def delete
+                #Elimina la carpeta del profesional, si tiene turnos levanta una excepcion de tipo SystemCallError
+                Dir.delete(Polycon::Utils.path << "/#{@name}")
             end
 
-            def edit_professional(name)
+            def edit(name)
                 #Modifica el nombre de la carpeta del profesional por el nuevo nombre
             end
 
@@ -42,11 +42,11 @@ module Polycon
                 #Si el nombre contiene /, levanta una excepcion indicando que el nombre no debe llevar tal caracter ya que los archivos no pueden llevar ese caracter en el nombre
                 #Si es un string vacio o tiene solo espacios, levanta una excepcion indicando que no puede estar vacio o contener solo espacios
                 if @name.gsub(" ","").empty?
-                    raise StandardError.new("El nombre del profesional no puede estar vacio o poseer solo espacios")
+                    raise StandardError.new("ERROR: El nombre del profesional no puede estar vacio o poseer solo espacios")
                 elsif @name.include?("/")
-                    raise StandardError.new("El nombre del profesional no puede llevar /")
+                    raise StandardError.new("ERROR: El nombre del profesional no puede llevar /")
                 elsif Dir.exist?(Polycon::Utils.path << "/#{@name}")
-                    raise StandardError.new("El profesional #{@name} ya existe")
+                    raise StandardError.new("ERROR: El profesional #{@name} ya existe")
                 end
                 Dir.mkdir(Polycon::Utils.path << "/#{@name}")
             end
