@@ -12,16 +12,16 @@ module Polycon
         ]
 
         def call(name:, **)
-          Polycon::Utils.check_polycon_exists
+          Utils.check_polycon_exists
+          
           profesional = Models::Professionals.new(name)
           begin
-            profesional.create_professional_folder
-          rescue StandardError => e
-            warn e.message
+            profesional.create_professional_folder #se crea una carpeta en base al profesional creado
+          rescue StandardError => e #captura los errores que puedan surgir al crear la carpeta
+            warn e.message #Imprime el mensaje de error de la excepcion
           else
-            puts "Se ha creado el profesional con el nombre #{name}"
+            puts "Se ha creado el profesional con el nombre #{name}" 
           end
-          #warn "TODO: Implementar creación de un o una profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -48,7 +48,14 @@ module Polycon
         ]
 
         def call(*)
-          warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          Utils.check_polycon_exists
+          professionals = Models::Professionals.list_professionals #obtengo los profesionales
+          if professionals.empty?
+            puts "No hay profesionales cargados en el sistema"
+          else
+            puts professionals
+          end
+          #warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
