@@ -4,6 +4,7 @@ GEM
     dry-cli (0.7.0)
 
 PLATFORMS
+  x64-mingw32
   x86_64-darwin-20
 
 DEPENDENCIES
@@ -13,4 +14,4 @@ RUBY VERSION
    ruby 2.7.4p191
 
 BUNDLED WITH
-   2.2.27
+   2.2.28
