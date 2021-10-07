@@ -17,7 +17,7 @@ module Polycon
           profesional = Models::Professionals.new(name)
           begin
             profesional.create_professional_folder #se crea una carpeta en base al profesional creado
-          rescue StandardError => e #captura los errores que puedan surgir al crear la carpeta
+          rescue RuntimeError => e #captura los errores que puedan surgir al crear la carpeta
             warn e.message #Imprime el mensaje de error de la excepcion
           else
             puts "Se ha creado el profesional con el nombre #{name}" 
@@ -39,9 +39,9 @@ module Polycon
           begin
             professional = Models::Professionals.get_professional(name)
             professional.delete
-          rescue SystemCallError
-            warn "ERROR: El profesional #{name} posee turnos, por lo que no se puede eliminar"
-          rescue StandardError => e
+          rescue SystemCallError #Error que devuelve Dir al querer borrar una carpeta no vacia
+            warn "ERROR: El profesional #{name} posee turnos, por lo que no se puede borrar"
+          rescue RuntimeError => e
             warn e.message
           else
             puts "Se ha eliminado el profesional #{name}"
@@ -78,6 +78,14 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
+          begin
+            professional = Models::Professionals.get_professional(old_name)
+            professional.edit(new_name)
+          rescue RuntimeError => e
+            warn e.message
+          else
+            puts "Se ha editado el nombre del profesional #{old_name} por #{new_name}"
+          end
           warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
