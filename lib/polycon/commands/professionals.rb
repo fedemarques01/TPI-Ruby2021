@@ -36,6 +36,7 @@ module Polycon
         ]
 
         def call(name: nil)
+          Utils.check_polycon_exists
           begin
             professional = Models::Professionals.get_professional(name)
             professional.delete
@@ -78,6 +79,7 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
+          Utils.check_polycon_exists
           begin
             professional = Models::Professionals.get_professional(old_name)
             professional.edit(new_name)
