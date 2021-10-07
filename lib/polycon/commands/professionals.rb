@@ -14,12 +14,14 @@ module Polycon
         def call(name:, **)
           Utils.check_polycon_exists
           
-          profesional = Models::Professionals.new(name)
-          begin
+          #validaciones del parametro recibido
+          if not Utils.valid_string?(name) #reviso que el nombre sea valido
+            warn "ERROR: El nombre de profesional #{name} no es valido"
+          elsif Models::Professionals.exist?(name) #reviso que no exista el profesional
+            warn "ERROR: El profesional #{name} ya existe en el sistema"
+          else #todo correcto
+            profesional = Models::Professionals.new(name)
             profesional.create_professional_folder #se crea una carpeta en base al profesional creado
-          rescue RuntimeError => e #captura los errores que puedan surgir al crear la carpeta
-            warn e.message #Imprime el mensaje de error de la excepcion
-          else
             puts "Se ha creado el profesional con el nombre #{name}" 
           end
         end
@@ -37,16 +39,14 @@ module Polycon
 
         def call(name: nil)
           Utils.check_polycon_exists
-          begin
-            professional = Models::Professionals.get_professional(name)
-            professional.delete
-          rescue SystemCallError #Error que devuelve Dir al querer borrar una carpeta no vacia
-            warn "ERROR: El profesional #{name} posee turnos, por lo que no se puede borrar"
-          rescue RuntimeError => e
-            warn e.message
-          else
-            puts "Se ha eliminado el profesional #{name}"
+
+          if not Models::Professionals.exist?(name) #reviso que si existe el profesional
+            warn "ERROR: El profesional #{name} no existe en el sistema"
+          else #todo correcto
+            profesional = Models::Professionals.new(name)
+            puts profesional.delete #se crea una carpeta en base al profesional creado
           end
+          
         end
       end
 
@@ -59,12 +59,7 @@ module Polycon
 
         def call(*)
           Utils.check_polycon_exists
-          professionals = Models::Professionals.list_professionals #obtengo los profesionales
-          if professionals.empty?
-            puts "No hay profesionales cargados en el sistema"
-          else
-            puts professionals
-          end
+          puts Models::Professionals.list_professionals #obtengo los profesionales y los imprimo en la consola
         end
       end
 
@@ -80,15 +75,19 @@ module Polycon
 
         def call(old_name:, new_name:, **)
           Utils.check_polycon_exists
-          begin
-            professional = Models::Professionals.get_professional(old_name)
-            professional.edit(new_name)
-          rescue RuntimeError => e
-            warn e.message
+          
+          if not Models::Professionals.exist?(old_name) #reviso si no existe el profesional
+            warn "ERROR: El profesional #{old_name} no existe en el sistema"
+          elsif not Utils.valid_string?(new_name) #reviso que el nombre sea valido
+            warn "ERROR: El nuevo nombre #{new_name} no es valido para un profesional"
+          elsif Models::Professionals.exist?(new_name) #reviso que no exista un profesional con el nombre nuevo
+            warn "ERROR: El profesional #{new_name} ya existe en el sistema"
           else
+            profesional = Models::Professionals.new(old_name)
+            profesional.rename(new_name)
             puts "Se ha editado el nombre del profesional #{old_name} por #{new_name}"
           end
-          warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
     end

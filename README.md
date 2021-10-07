@@ -1,16 +1,42 @@
-# Polycon
 
-Plantilla para comenzar con el Trabajo Práctico Integrador de la cursada 2021 de la materia
-Taller de Tecnologías de Producción de Software - Opción Ruby, de la Facultad de Informática
-de la Universidad Nacional de La Plata.
+## Introducción
 
-Polycon es una herramienta para gestionar los turnos y profesionales de un policonsultorio.
+Este es una herramienta para gestionar la agenda de turnos de un policonsultorio, en el cual atienden profesionales de diferentes especialidades
+Esta herramienta fue implementada como proyecto para el Taller de Tecnologias de Producción de Software Opcion Ruby
+de la Universidad Nacional de La Plata
 
-Este proyecto es simplemente una plantilla para comenzar a implementar la herramienta e
-intenta proveer un punto de partida para el desarrollo, simplificando el _bootstrap_ del
-proyecto que puede ser una tarea que consume mucho tiempo y conlleva la toma de algunas
-decisiones que más adelante pueden tener efectos tanto positivos como negativos en el
-proyecto.
+## Decisiones de diseño
+
+Para implementar los modelos se creo un modulo Models dentro de Polycon que englobe el modelado de clases Professionals y Appointments, estas clases pueden encontrarse en `lib/polycon/models` en los archivos
+`professionals.rb` y `appointments.rb` respectivamente
+
+# Sobre la clase Professionals
+
+Para la implementacion de la clase se definió que como comportamiento de clase que se pueda: 
+  >Verificar la existencia de un profesional en el sistema, esto se hace en el metodo exist? 
+  >Listar los profesionales del sistema (metodo list_professionals)
+  >Definir instancias de la clase en base a un nombre recibido por parametro (initialize)
+Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba mas coherente que un profesional sea el responsable de manejar su persistencia en el sistema
+Los siguientes metodos son comportamientos de la instancia de professionals
+  >create_professional_folder , que crea una carpeta con el nombre del profesional
+  >rename(newName), renombra la carpeta del professional por el nombre recibido por parametro
+  >delete, elimina la carpeta del profesional, retornando un mensaje en caso de que sea exitosa o fallida la operacion, una carpeta no puede borrarse si el profesional posee turnos
+
+# Sobre las validaciones del nombre de los profesionales
+
+Para las validaciones de profesionales, se definio un metodo validate_string(name) el cual se asegura de que el nombre pasado por parametro a la hora de renombrar o crear profesionales sea valido. Que sea valido implica que no este vacio, que no sea solo espacios y que no posea el caracter "/" ya que los archivos en sistemas Unix no pueden poseer este caracter en su nombre.
+Este metodo se encuentra en un modulo aparte denominado "Utils", el cual puede encontrarse en `lib/polycon/utils.rb`, junto a otras funciones diseñadas como "helpers" para la validacion de distintas cosas para la herramienta (el resto de funciones serán explicadas mas adelante)
+Se decidio que este metodo se encuentre aquí y no como un comportamiento de la clase Professionals ya que el validar que un string sea correcto es un metodo mas general y no algo limitado solo a los profesionales.
+
+# El codigo de los commands de profesionales
+
+En las funciones llamadas a la hora de ejecutar las operaciones con profesionales, se decidio que la funcion ejecutada llame a los validadores necesarios para asegurarse que los parametros ingresados son correctos.
+Esto esta hecho de esta forma para que si se dejase de usar la terminal, los validadores pueden seguirse llamando donde sean requeridos sin necesidad de la misma.
+ >Puede ver la implementacion de estos llamados a los validadores en `/lib/polycon/commands/professionals.rb`
+
+ 
+
+
 
 ## Uso de `polycon`
 
@@ -48,18 +74,6 @@ $ polycon [args]
 > Bundler. Para más información sobre la instalación de las dependencias, consultar la
 > siguiente sección ("Desarrollo").
 
-Documentar el uso para usuarios finales de la herramienta queda fuera del alcance de esta
-plantilla y **se deja como una tarea para que realices en tu entrega**, pisando el contenido
-de este archivo `README.md` o bien en uno nuevo. Ese archivo deberá contener cualquier
-documentación necesaria para entender el funcionamiento y uso de la herramienta que hayas
-implementado, junto con cualquier decisión de diseño del modelo de datos que consideres
-necesario documentar.
-
-## Desarrollo
-
-Esta sección provee algunos tips para el desarrollo de tu entrega a partir de esta
-plantilla.
-
 ### Instalación de dependencias
 
 Este proyecto utiliza Bundler para manejar sus dependencias. Si aún no sabés qué es eso
@@ -82,30 +96,3 @@ $ bundle install
 Una vez que la instalación de las dependencias sea exitosa (esto deberías hacerlo solamente
 cuando estés comenzando con la utilización del proyecto), podés comenzar a probar la
 herramienta y a desarrollar tu entrega.
-
-### Estructura de la plantilla
-
-El proyecto te provee una estructura inicial en la cual podés basarte para implementar tu
-entrega. Esta estructura no es necesariamente rígida, pero tené en cuenta que modificarla
-puede requerir algún trabajo adicional de tu parte.
-
-* `lib/`: directorio que contiene todas las clases del modelo y de soporte para la ejecución
-  del programa `bin/polycon`.
-  * `lib/polycon.rb` es la declaración del namespace `Polycon`, y las directivas de carga
-    de clases o módulos que estén contenidos directamente por éste (`autoload`).
-  * `lib/polycon/` es el directorio que representa el namespace `Polycon`. Notá la convención
-    de que el uso de un módulo como namespace se refleja en la estructura de archivos del
-    proyecto como un directorio con el mismo nombre que el archivo `.rb` que define el módulo,
-    pero sin la terminación `.rb`. Dentro de este directorio se ubicarán los elementos del
-    proyecto que estén bajo el namespace `Polycon` - que, también por convención y para
-    facilitar la organización, deberían ser todos. Es en este directorio donde deberías
-    ubicar tus clases de modelo, módulos, clases de soporte, etc. Tené en cuenta que para
-    que todo funcione correctamente, seguramente debas agregar nuevas directivas de carga en la
-    definición del namespace `Polycon` (o dónde corresponda, según tus decisiones de diseño).
-  * `lib/polycon/commands.rb` y `lib/polycon/commands/*.rb` son las definiciones de comandos
-    de `dry-cli` que se utilizarán. En estos archivos es donde comenzarás a realizar la
-    implementación de las operaciones en sí, que en esta plantilla están provistas como
-    simples disparadores.
-  * `lib/polycon/version.rb` define la versión de la herramienta, utilizando [SemVer](https://semver.org/lang/es/).
-* `bin/`: directorio donde reside cualquier archivo ejecutable, siendo el más notorio `polycon`
-  que se utiliza como punto de entrada para el uso de la herramienta.
