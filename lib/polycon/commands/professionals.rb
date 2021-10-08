@@ -40,9 +40,11 @@ module Polycon
         def call(name: nil)
           Utils.check_polycon_exists
 
-          if not Models::Professionals.exist?(name) #reviso que si existe el profesional
+          if Utils.blank_string?(name)
+            warn "ERROR: El nombre ingresado esta vacio"
+          elsif not Models::Professionals.exist?(name) #reviso que si existe el profesional
             warn "ERROR: El profesional #{name} no existe en el sistema"
-          else #todo correcto
+          else #se puede intentar borrar el profesional
             profesional = Models::Professionals.new(name)
             puts profesional.delete #se crea una carpeta en base al profesional creado
           end
@@ -76,7 +78,10 @@ module Polycon
         def call(old_name:, new_name:, **)
           Utils.check_polycon_exists
           
-          if not Models::Professionals.exist?(old_name) #reviso si no existe el profesional
+          #validaciones antes de renombrar un archivo
+          if Utils.blank_string?(old_name) #reviso si el nombre viejo esta en blanco
+            warn "ERROR: El nombre de profesional ingresado esta vacio"
+          elsif not Models::Professionals.exist?(old_name) #reviso si no existe el profesional
             warn "ERROR: El profesional #{old_name} no existe en el sistema"
           elsif not Utils.valid_string?(new_name) #reviso que el nombre sea valido
             warn "ERROR: El nuevo nombre #{new_name} no es valido para un profesional"

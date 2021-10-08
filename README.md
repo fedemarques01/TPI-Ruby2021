@@ -30,11 +30,11 @@ Se decidio que este metodo se encuentre aquí y no como un comportamiento de la 
 
 # El codigo de los commands de profesionales
 
-En las funciones llamadas a la hora de ejecutar las operaciones con profesionales, se decidio que la funcion ejecutada llame a los validadores necesarios para asegurarse que los parametros ingresados son correctos.
+En las funciones llamadas a la hora de ejecutar las operaciones con profesionales, se decidió que la función ejecutada llame a los validadores necesarios para asegurarse que los parametros ingresados son correctos.
 Esto esta hecho de esta forma para que si se dejase de usar la terminal, los validadores pueden seguirse llamando donde sean requeridos sin necesidad de la misma.
- >Puede ver la implementacion de estos llamados a los validadores en `/lib/polycon/commands/professionals.rb`
+>Puede ver la implementacion de estos llamados a los validadores en `/lib/polycon/commands/professionals.rb`
 
- 
+
 
 
 

@@ -12,12 +12,17 @@ module Polycon
         end
 
         def self.valid_string?(name)
-            #Valida que el string no este vacio o que sea solo espacios
-            if name.gsub(" ","").empty? or name.include?("/")
+            #Valida que el string sea valido para referenciar un nombre de archivo en un sistema Unix
+            if self.blank_string?(name) or name.include?("/")
                 false
             else
                 true
             end
+        end
+
+        def self.blank_string?(name)
+            #devuelve true o false si el string posee solo espacios o está vacio
+            name.strip.empty?
         end
     end
 end
