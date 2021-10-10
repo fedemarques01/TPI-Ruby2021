@@ -93,8 +93,17 @@ module Polycon
           '"Alma Estevez" # Cancels all appointments for professional Alma Estevez',
         ]
 
-        def call(professional:)
-          warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(professional:,**)
+          Utils.check_polycon_exists
+          if Utils.blank_string?(professional)
+            warn "ERROR: El profesional no puede ser una cadena vacia"
+          elsif not Models::Professionals.exist?(professional)
+            warn "ERROR: El profesional no existe en el sistema"
+          else
+            profesional = Models::Professionals.new(professional)
+            puts profesional.cancel_appointments
+          end
+          #warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 

@@ -55,6 +55,17 @@ module Polycon
                     }
                 end
             end
+
+            def cancel_appointments
+                #Cancela todos los turnos del profesional, devolviendo un mensaje de exito si elimina todos o un mensaje de error en caso contrario
+                Dir.each_child("#{Polycon::Utils.path}/#{@name}") { |appointment| 
+                    File.delete("#{Polycon::Utils.path}/#{@name}/#{appointment}")
+                }
+                rescue
+                    "No se pudo completar el cancelado de todos los turnos del profesional #{@name}"
+                else
+                    "Se ha completado el cancelado de todos los turnos del profesional #{@name}"
+            end
         end
     end
 end
