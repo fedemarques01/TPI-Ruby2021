@@ -45,8 +45,18 @@ module Polycon
           '"2021-09-16 13:00" --professional="Alma Estevez" # Shows information for the appointment with Alma Estevez on the specified date and time'
         ]
 
-        def call(date:, professional:)
-          warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(date:, professional: "")
+          Utils.check_polycon_exists
+          #validacion de que el profesional y la fecha existen
+          if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+            warn "ERROR: El profesional #{professional} no existe en el sistema"
+          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+            warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
+          else #se pueden mostrar los detalles del turno
+            appointment = Models::Appointments.get_appointment(date,professional)
+            appointment.show #muestra los datos del turno
+          end
+          #warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -60,8 +70,17 @@ module Polycon
           '"2021-09-16 13:00" --professional="Alma Estevez" # Cancels the appointment with Alma Estevez on the specified date and time'
         ]
 
-        def call(date:, professional:)
-          warn "TODO: Implementar borrado de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(date:, professional: "")
+          Utils.check_polycon_exists
+          #validado de parametros
+          if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+            warn "ERROR: El profesional #{professional} no existe en el sistema"
+          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+            warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
+          else #se puede intentar eliminar el turno
+            appointment = Models::Appointments.get_appointment(date,professional)
+            puts appointment.cancel #muestro el mensaje que devuelve el eliminar un turno
+          end
         end
       end
 

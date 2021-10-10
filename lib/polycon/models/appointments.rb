@@ -32,7 +32,7 @@ module Polycon
 
             def create_file
                 #crea un archivo .paf con los datos del turno y devuelve un mensaje de operacion exitosa o un mensaje de error en caso que no se pueda
-                File.open("#{self.my_path}/#{@date}.paf", "w") do |file| 
+                File.open("#{my_path}/#{@date}.paf", "w") do |file| 
                     details.values.each { |value| file.puts "#{value}"}
                 end
                 rescue
@@ -41,9 +41,14 @@ module Polycon
                     "Se ha creado el turno para el dia #{@date} para el profesional #{@professional}"
             end
 
+            def show
+                #imprime en pantalla los datos de un turno formateados de forma nombre : valor
+                details.each {|key,value| puts "#{key} : #{value}"}
+            end
+
             def rename(new_date)
                 #cambia el nombre del archivo por la fecha recibida por parametro y retorna un mensaje de exito si se pudo renombrar o un mensaje de error en caso contrario
-                File.rename("#{self.my_path}/#{@date}.paf","#{self.my_path}/#{new_date}.paf")
+                File.rename("#{my_path}/#{@date}.paf","#{self.my_path}/#{new_date}.paf")
                 rescue
                     "No se ha podido reagendar el turno del dia #{@date} al dia #{new_date}"
                 else
@@ -54,13 +59,13 @@ module Polycon
                 #edita los campos del archivo que se reciban por parametro
             end
 
-            def delete
+            def cancel
                 #elimina el turno y devuelve un mensaje de exito si fue eliminado o un mensaje de error en caso contrario
-                File.delete("#{self.my_path}/#{@date}.paf")
+                File.delete("#{my_path}/#{@date}.paf")
                 rescue
-                    "No se ha podido eliminar el turno del profesional #{@professional} del dia #{@date}"
+                    "No se ha podido cancelar el turno del profesional #{@professional} del dia #{@date}"
                 else
-                    "Se ha eliminado el turno del dia #{@date} del profesional #{@professional}"
+                    "Se ha cancelado el turno del dia #{@date} del profesional #{@professional}"
             end
         end
     end

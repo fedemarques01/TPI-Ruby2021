@@ -24,7 +24,8 @@ module Polycon
             #devuelve true o false si el string posee solo espacios o está vacio
             name.strip.empty?
         end
-        require 'date'
+        
+        require 'date' #modulo necesario para la validacion de fechas
         def self.valid_date?(date)
             #devuelve true o false si la fecha recibida por parametro es una fecha valida con formato AAAA-MM-DD HH:II
             DateTime.strptime(date,"%Y-%m-%d_%H-%M")
