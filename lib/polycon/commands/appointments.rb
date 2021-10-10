@@ -15,8 +15,23 @@ module Polycon
           '"2021-09-16 13:00" --professional="Alma Estevez" --name=Carlos --surname=Carlosi --phone=2213334567'
         ]
 
-        def call(date:, professional:, name:, surname:, phone:, notes: nil)
-          warn "TODO: Implementar creación de un turno con fecha '#{date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(date:, professional: "", name: "", surname: "", phone: "", notes: nil)
+          Utils.check_polycon_exists #verificamos que polycon exista
+
+          #validado de parametros
+          validation_result = Utils.validate_options(professional: professional, name: name,surname: surname,phone: phone) #se guarda el resultado de validar los parametros en una variable para no llamarlo 2 veces
+          if not Utils.valid_date?(date) #reviso que la fecha ingresada sea correcta
+            warn "ERROR: La fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
+          elsif not validation_result.empty? #reviso que el resto de parametros obligatorios recibidos sean validos
+            warn "#{validation_result}ERROR: Los datos recibidos para el turno no son correctos\nEjemplo de uso: ''2021-09-16_13-00' --professional='Alma Estevez' --name=Carlos --surname=Carlosi --phone=2213334567'"
+          elsif not Models::Professionals.exist?(professional) #reviso que el profesional no exista
+            warn "ERROR: No se encontró el profesional ingresado"
+          elsif Models::Appointments.exist?(date,professional) #reviso que el turno para ese profesional no exista
+            warn "ERROR: Ya existe el turno para el profesional #{professional} el dia #{date}"
+          else #Los campos ingresados son correctos
+            appointment = Models::Appointments.new(date,professional,surname,name,phone,notes)
+            puts appointment.create_file
+          end
         end
       end
 

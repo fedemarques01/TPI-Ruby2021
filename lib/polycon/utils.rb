@@ -24,5 +24,27 @@ module Polycon
             #devuelve true o false si el string posee solo espacios o está vacio
             name.strip.empty?
         end
+        require 'date'
+        def self.valid_date?(date)
+            #devuelve true o false si la fecha recibida por parametro es una fecha valida con formato AAAA-MM-DD HH:II
+            DateTime.strptime(date,"%Y-%m-%d_%H-%M")
+            rescue
+                false
+            else
+                true
+        end
+
+        #Este metodo recibe un hash variable de opciones obligatorias y revisa que las opciones ingresadas no sean strings vacios o solo de espacios
+        #Retorna un mensaje donde especifica los parametros que son strings vacios o de solo espacios
+        #En el caso donde ninguno este vacio, retorna un string vacio
+        def self.validate_options(**options)
+            message = ""
+            options.each { 
+                |key,value| if self.blank_string?(value)
+                message << "El parametro #{key} no puede ser una cadena vacia\n" 
+            end
+            }
+            message
+        end
     end
 end
