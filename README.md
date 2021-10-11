@@ -37,14 +37,7 @@ Como se mencionó antes, este modulo implementa distintas funciones que son de u
   Se encarga de validar de que la fecha recibida por parametro sea del formato AAAA-MM-DD_HH-II , para asi poder crear los archivos de los appointments de la herramienta.
 
   >check_options :
-  Este metodo recibe un hash por parametro ( puede ser explicito o implicito ) y valida elemento por elemento que no sean strings vacios, devolviendo un mensaje que contiene las claves que no cumplieron esta condicion, para luego informarlas al usuario y que pueda saber que parametro ingresado no fue valido. Se opto por un hash con un metodo each en lugar de un select o inject por las siguientes razones:
-
-    Hacer un select solo devolveria un nuevo hash con los elementos que eran vacios y lo que se queria era devolver
-    algo mas personalizado y mas entendible para el usuario.
-    Hacer un inject causaba que si un elemento no era un string vacio el acumulador se volveria nil, causando un
-    error ya que el resto de metodos para validar aplican para strings y no para nil.
-
-  Este metodo es utilizado para validar las opciones recibidas en los comandos de appointments, ya que son varias y todas deben cumplir la misma condicion.
+  Este metodo recibe un hash por parametro ( puede ser explicito o implicito ) y valida elemento por elemento que no sean strings vacios, devolviendo un mensaje que contiene las claves que no cumplieron esta condicion, para luego informarlas al usuario y que pueda saber que parametro ingresado no fue valido.Este metodo es utilizado para validar las opciones recibidas en los comandos de appointments, ya que son varias y todas deben cumplir la misma condicion.
 
   Todas estas funciones estan declaradas en este modulo ya que son metodos de un uso mas general y no exclusivos del comportamiento de una clase como professionals y appointments.
 
