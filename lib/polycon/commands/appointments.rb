@@ -16,10 +16,10 @@ module Polycon
         ]
 
         def call(date:, professional: "", name: "", surname: "", phone: "", notes: nil)
-          Utils.check_polycon_exists #verificamos que polycon exista
+          Utils.ensure_polycon_exists #verificamos que polycon exista
 
           #validado de parametros
-          validation_result = Utils.validate_options(professional: professional, name: name,surname: surname,phone: phone) #se guarda el resultado de validar los parametros en una variable para no llamarlo 2 veces
+          validation_result = Utils.check_options(professional: professional, name: name,surname: surname,phone: phone) #se guarda el resultado de validar los parametros en una variable para no llamarlo 2 veces
           if not Utils.valid_date?(date) #reviso que la fecha ingresada sea correcta
             warn "ERROR: La fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
           elsif not validation_result.empty? #reviso que el resto de parametros obligatorios recibidos sean validos
@@ -30,7 +30,7 @@ module Polycon
             warn "ERROR: Ya existe el turno para el profesional #{professional} el dia #{date}"
           else #Los campos ingresados son correctos
             appointment = Models::Appointments.new(date,professional,surname,name,phone,notes)
-            puts appointment.create_file
+            puts appointment.save_file
           end
         end
       end
@@ -46,7 +46,7 @@ module Polycon
         ]
 
         def call(date:, professional: "")
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           #validacion de que el profesional y la fecha existen
           if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema"
@@ -71,10 +71,10 @@ module Polycon
         ]
 
         def call(date:, professional: "")
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           #validado de parametros
           if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
-            warn "ERROR: El profesional #{professional} no existe en el sistema"
+            warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
           elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
             warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
           else #se puede intentar eliminar el turno
@@ -94,7 +94,7 @@ module Polycon
         ]
 
         def call(professional:,**)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           if Utils.blank_string?(professional)
             warn "ERROR: El profesional no puede ser una cadena vacia"
           elsif not Models::Professionals.exist?(professional)
@@ -119,7 +119,7 @@ module Polycon
         ]
 
         def call(professional:, date: nil)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           if Utils.blank_string?(professional)
             warn "ERROR: El profesional no puede ser una cadena vacia"
           elsif not Models::Professionals.exist?(professional)
@@ -128,8 +128,6 @@ module Polycon
             profesional = Models::Professionals.new(professional)
             profesional.list_appointments(date)
           end
-
-          #warn "TODO: Implementar listado de turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -144,8 +142,21 @@ module Polycon
           '"2021-09-16 13:00" "2021-09-16 14:00" --professional="Alma Estevez" # Reschedules appointment on the first date for professional Alma Estevez to be now on the second date provided'
         ]
 
-        def call(old_date:, new_date:, professional:)
-          warn "TODO: Implementar cambio de fecha de turno con fecha '#{old_date}' para que pase a ser '#{new_date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(old_date:, new_date:, professional: "")
+          Utils.ensure_polycon_exists
+          #validado de parametros
+          if not Utils.valid_date?(new_date) #reviso si la fecha recibida es un formato valido
+            warn "ERROR: La nueva fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
+          elsif Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+            warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
+          elsif Utils.blank_string?(old_date) or not Models::Appointments.exist?(old_date,professional) #reviso que si existe el turno para el profesional
+            warn "ERROR: El turno del dia #{old_date} del profesional #{professional} no existe en el sistema"
+          elsif Models::Appointments.exist?(new_date,professional) #reviso que el nuevo turno para ese profesional no exista
+            warn "ERROR: Ya existe el turno para el profesional #{professional} el dia #{new_date}"
+          else #se puede intentar eliminar el turno
+            appointment = Models::Appointments.get_appointment(old_date,professional)
+            puts appointment.rename(new_date) #muestro el mensaje que devuelve el eliminar un turno
+          end
         end
       end
 
@@ -165,8 +176,20 @@ module Polycon
           '"2021-09-16 13:00" --professional="Alma Estevez" --notes="Some notes for the appointment" # Only changes the notes for the specified appointment. The rest of the information remains unchanged.',
         ]
 
-        def call(date:, professional:, **options)
-          warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(date:, professional: "", **options)
+          Utils.ensure_polycon_exists
+          #validado de parametros
+          check_result = Utils.check_options(options) #reviso que los campos a modificar no sean strings vacios
+          if not check_result.empty?
+            warn "#{check_result}ERROR: Las opciones para editar no son validas"
+          elsif Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+            warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
+          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+            warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
+          else #se pueden editar los campos del turno
+            appointment = Models::Appointments.get_appointment(date,professional)
+            puts appointment.edit_file(options) #Imprime el mensaje de editar el turno
+          end
         end
       end
     end

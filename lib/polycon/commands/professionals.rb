@@ -12,7 +12,7 @@ module Polycon
         ]
 
         def call(name:, **)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           
           #validaciones del parametro recibido
           if not Utils.valid_string?(name) #reviso que el nombre sea valido
@@ -21,8 +21,7 @@ module Polycon
             warn "ERROR: El profesional #{name} ya existe en el sistema"
           else #todo correcto
             profesional = Models::Professionals.new(name)
-            profesional.create_professional_folder #se crea una carpeta en base al profesional creado
-            puts "Se ha creado el profesional con el nombre #{name}" 
+            puts profesional.create_professional_folder #se imprime en pantalla el mensaje resultante de crear una carpeta del professional
           end
         end
       end
@@ -38,7 +37,7 @@ module Polycon
         ]
 
         def call(name: nil)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
 
           if Utils.blank_string?(name)
             warn "ERROR: El nombre ingresado esta vacio"
@@ -60,7 +59,7 @@ module Polycon
         ]
 
         def call(*)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           puts Models::Professionals.list_professionals #obtengo los profesionales y los imprimo en la consola
         end
       end
@@ -76,7 +75,7 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
-          Utils.check_polycon_exists
+          Utils.ensure_polycon_exists
           
           #validaciones antes de renombrar un archivo
           if Utils.blank_string?(old_name) #reviso si el nombre viejo esta en blanco
@@ -89,8 +88,7 @@ module Polycon
             warn "ERROR: El profesional #{new_name} ya existe en el sistema"
           else
             profesional = Models::Professionals.new(old_name)
-            profesional.rename(new_name)
-            puts "Se ha editado el nombre del profesional #{old_name} por #{new_name}"
+            puts profesional.rename(new_name) #Se imprime el mensaje que devuelve el renombrar un profesional
           end
           #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end

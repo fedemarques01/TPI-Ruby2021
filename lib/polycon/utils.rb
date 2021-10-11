@@ -1,6 +1,6 @@
 module Polycon
     module Utils
-        def self.check_polycon_exists
+        def self.ensure_polycon_exists
             if not Dir.exist?(Dir.home << "/.polycon")
                 warn "ADVERTENCIA: No se ha podido encontrar la carpeta .polycon.\nSe ha creado la carpeta .polycon en su directorio home para almacenar la informacion sobre profesionales y turnos"
                 Dir.mkdir(Dir.home << "/.polycon")
@@ -38,7 +38,7 @@ module Polycon
         #Este metodo recibe un hash variable de opciones obligatorias y revisa que las opciones ingresadas no sean strings vacios o solo de espacios
         #Retorna un mensaje donde especifica los parametros que son strings vacios o de solo espacios
         #En el caso donde ninguno este vacio, retorna un string vacio
-        def self.validate_options(**options)
+        def self.check_options(**options)
             message = ""
             options.each { 
                 |key,value| if self.blank_string?(value)

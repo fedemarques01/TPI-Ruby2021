@@ -13,17 +13,21 @@ module Polycon
             end
 
             def create_professional_folder
-                #crea una carpeta con el nombre del profesional
+                #crea una carpeta con el nombre del profesional y devuelve un mensaje de exito si fue creada o un mensaje de error en caso contrario
                 Dir.mkdir("#{Polycon::Utils.path}/#{name}")
+                rescue
+                    "Ocurrio un error al crear la carpeta del profesional #{name}"
+                else
+                    "Se ha creado la carpeta del profesional #{name}"
             end
 
             def delete
                 #Elimina la carpeta del profesional, si tiene turnos rescata la excepcion y devuelve un mensaje explicando que no se pudo borrar, caso contrario retorna un mensaje de confirmacion de operacion
                 Dir.delete("#{Polycon::Utils.path}/#{name}")
                 rescue SystemCallError
-                    "El profesional #{@name} posee turnos, por lo que no puede borrarse"
+                    "El profesional #{name} posee turnos, por lo que no puede borrarse"
                 else
-                    "El profesional #{@name} ha sido borrado del sistema"
+                    "El profesional #{name} ha sido borrado del sistema"
             end
 
             def self.list_professionals
@@ -38,14 +42,18 @@ module Polycon
             def rename(newName)
                 #Modifica el nombre de la carpeta del profesional por el nuevo nombre
                 File.rename("#{Polycon::Utils.path}/#{name}", "#{Polycon::Utils.path}/#{newName}")
+                rescue
+                    "No pudo renombrarse el profesional #{name} a #{newName}"
+                else
+                    "Se renombró el profesional #{name} a #{newName}"
             end
 
             def list_appointments(date)
                 #Muestra en pantalla todos los turnos del profesional, opcionalmente filtrados por fecha, si no tiene turnos lo informa en pantalla
-                if Dir.children("#{Polycon::Utils.path}/#{@name}").empty?
-                    puts "El profesional #{@name} no tiene turnos"
+                if Dir.children("#{Polycon::Utils.path}/#{name}").empty?
+                    puts "El profesional #{name} no tiene turnos"
                 else
-                    Dir.each_child("#{Polycon::Utils.path}/#{@name}") { |appointment|
+                    Dir.each_child("#{Polycon::Utils.path}/#{name}") { |appointment|
                         if ((appointment.split("_")[0] == date) or date.nil?)
                             turno = Appointments.get_appointment(appointment.delete(".paf"),@name)
                             puts "Date : #{turno.date}hs"
@@ -58,13 +66,13 @@ module Polycon
 
             def cancel_appointments
                 #Cancela todos los turnos del profesional, devolviendo un mensaje de exito si elimina todos o un mensaje de error en caso contrario
-                Dir.each_child("#{Polycon::Utils.path}/#{@name}") { |appointment| 
-                    File.delete("#{Polycon::Utils.path}/#{@name}/#{appointment}")
+                Dir.each_child("#{Polycon::Utils.path}/#{name}") { |appointment| 
+                    File.delete("#{Polycon::Utils.path}/#{name}/#{appointment}")
                 }
                 rescue
-                    "No se pudo completar el cancelado de todos los turnos del profesional #{@name}"
+                    "No se pudo completar el cancelado de todos los turnos del profesional #{name}"
                 else
-                    "Se ha completado el cancelado de todos los turnos del profesional #{@name}"
+                    "Se ha completado el cancelado de todos los turnos del profesional #{name}"
             end
         end
     end

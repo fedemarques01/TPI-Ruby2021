@@ -8,7 +8,7 @@ module Polycon
                 @date = date
                 @professional = professional
                 @details = {surname: surname,name: name, phone: phone}
-                @details["notes"] = notes unless notes.nil?
+                details["notes"] = notes unless notes.nil?
             end
 
             def self.exist?(date, professional)
@@ -30,15 +30,15 @@ module Polycon
                 "#{Polycon::Utils.path}/#{professional}"
             end
 
-            def create_file
-                #crea un archivo .paf con los datos del turno y devuelve un mensaje de operacion exitosa o un mensaje de error en caso que no se pueda
-                File.open("#{my_path}/#{@date}.paf", "w") do |file| 
+            def save_file
+                #guarda en un archivo .paf los datos del turno y devuelve un mensaje de operacion exitosa o un mensaje de error en caso que no se pueda
+                File.open("#{my_path}/#{date}.paf", "w") do |file| 
                     details.values.each { |value| file.puts "#{value}"}
                 end
                 rescue
-                    "Ocurrió un error al generar el turno el dia #{@date} para el profesional #{@professional}, por favor intentelo de nuevo"
+                    "Ocurrió un error al guardar los datos del turno del dia #{date} para el profesional #{professional}, por favor intentelo de nuevo"
                 else
-                    "Se ha creado el turno para el dia #{@date} para el profesional #{@professional}"
+                    "Se han guardado los datos del turno del dia #{date} para el profesional #{professional}"
             end
 
             def show
@@ -48,24 +48,26 @@ module Polycon
 
             def rename(new_date)
                 #cambia el nombre del archivo por la fecha recibida por parametro y retorna un mensaje de exito si se pudo renombrar o un mensaje de error en caso contrario
-                File.rename("#{my_path}/#{@date}.paf","#{self.my_path}/#{new_date}.paf")
+                File.rename("#{my_path}/#{date}.paf","#{self.my_path}/#{new_date}.paf")
                 rescue
-                    "No se ha podido reagendar el turno del dia #{@date} al dia #{new_date}"
+                    "No se ha podido reagendar el turno del dia #{date} al dia #{new_date}"
                 else
-                    "Se ha reagendado el turno del profesional #{@professional} del dia #{@date} al dia #{new_date}"
+                    "Se ha reagendado el turno del profesional #{professional} del dia #{date} al dia #{new_date}"
             end
 
             def edit_file(**fields)
-                #edita los campos del archivo que se reciban por parametro
+                #Recibe una cantidad variable de atributos en forma de hash y edita los campos del archivo que se reciban, luego sobreescribe los datos del archivo con la nueva informacion
+                fields.each { |key,value| details[key] = value }
+                save_file
             end
 
             def cancel
                 #elimina el turno y devuelve un mensaje de exito si fue eliminado o un mensaje de error en caso contrario
-                File.delete("#{my_path}/#{@date}.paf")
+                File.delete("#{my_path}/#{date}.paf")
                 rescue
-                    "No se ha podido cancelar el turno del profesional #{@professional} del dia #{@date}"
+                    "No se ha podido cancelar el turno del profesional #{professional} del dia #{date}"
                 else
-                    "Se ha cancelado el turno del dia #{@date} del profesional #{@professional}"
+                    "Se ha cancelado el turno del dia #{date} del profesional #{professional}"
             end
         end
     end
