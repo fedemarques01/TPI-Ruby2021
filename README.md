@@ -21,29 +21,29 @@ Ademas, se creo también el modulo Utils, el cual puede encontrarse en `lib/poly
 
 Como se mencionó antes, este modulo implementa distintas funciones que son de utilidad en distintas partes de la herramienta. Estos metodos son:
   
-  >ensure_polycon_exist
-  Este metodo se asegura de que la carpeta .polycon exista en el directorio home del usuario, en caso de que no exista avisa en la terminal que no existe y que fue creada en el directorio home, y es llamado al principio de cada call de comando ya que es necesario que la carpeta exista siempre para que la herramienta funcione correctamente.
+  - ensure_polycon_exist
+    Este metodo se asegura de que la carpeta .polycon exista en el directorio home del usuario, en caso de que no exista avisa en la terminal que no existe y que fue creada en el directorio home, y es llamado al principio de cada call de comando ya que es necesario que la carpeta exista siempre para que la herramienta funcione correctamente.
   
-  >path
-  Este metodo devuelve la ruta desde el directorio home hasta la carpeta .polycon, se utiliza para que en caso de cambiar la locacion del directorio, en lugar de cambiarlo en cada parte del programa, solo se cambia la ruta de este metodo. Ademas, simplifica el obtener la ruta absoluta en los distintos metodos de la herramienta.
+  - path
+    Este metodo devuelve la ruta desde el directorio home hasta la carpeta .polycon, se utiliza para que en caso de cambiar la locacion del directorio, en lugar de cambiarlo en cada parte del programa, solo se cambia la ruta de este metodo. Ademas, simplifica el obtener la ruta absoluta en los distintos metodos de la herramienta.
   
-  >blank_string?
-  Este metodo se encarga de validar el string recibido por parametro de forma tal que no sea un string vacio, es decir que no posea solo "" o solo espacios ("    ").
+  - blank_string?
+    Este metodo se encarga de validar el string recibido por parametro de forma tal que no sea un string vacio, es decir que no posea solo "" o solo espacios ("    ").
   
-  >valid_string?
-  Este metodo se encarga de revisar que el string recibido por parametro no sea un string en blanco (mediante el uso de la funcion blank_string?) y también se encarga de que el string no lleve el caracter / , ya que los nombres de archivo en Unix  no pueden llevar este caracter. Es utilizado para validar que el nombre del profesional recibido sea valido para poder crear un directorio en el sistema.
+  - valid_string?
+    Este metodo se encarga de revisar que el string recibido por parametro no sea un string en blanco (mediante el uso de la funcion blank_string?) y también se encarga de que el string no lleve el caracter / , ya que los nombres de archivo en Unix  no pueden llevar este caracter. Es utilizado para validar que el nombre del profesional recibido sea valido para poder crear un directorio en el sistema.
 
-  >valid_date?
-  Se encarga de validar de que la fecha recibida por parametro sea del formato AAAA-MM-DD_HH-II , para asi poder crear los archivos de los appointments de la herramienta.
+  - valid_date?
+    Se encarga de validar de que la fecha recibida por parametro sea del formato AAAA-MM-DD_HH-II , para asi poder crear los archivos de los appointments de la herramienta.
 
-  >check_options
-  Este metodo recibe un hash por parametro ( puede ser explicito o implicito ) y valida elemento por elemento que no sean strings vacios, devolviendo un mensaje que contiene las claves que no cumplieron esta condicion, para luego informarlas al usuario y que pueda saber que parametro ingresado no fue valido. Se opto por un hash con un metodo each en lugar de un select o inject por las siguientes razones:
-    Hacer un select solo devolveria un nuevo hash con los elementos que eran vacios y lo que se queria era devolver
-    algo mas personalizado y mas entendible para el usuario.
-    Hacer un inject causaba que si un elemento no era un string vacio el acumulador se volveria nil, causando un
-    error ya que el resto de metodos para validar aplican para strings y no para nil.
+  - check_options
+    Este metodo recibe un hash por parametro ( puede ser explicito o implicito ) y valida elemento por elemento que no sean strings vacios, devolviendo un mensaje que contiene las claves que no cumplieron esta condicion, para luego informarlas al usuario y que pueda saber que parametro ingresado no fue valido. Se opto por un hash con un metodo each en lugar de un select o inject por las siguientes razones:
+      Hacer un select solo devolveria un nuevo hash con los elementos que eran vacios y lo que se queria era devolver
+      algo mas personalizado y mas entendible para el usuario.
+      Hacer un inject causaba que si un elemento no era un string vacio el acumulador se volveria nil, causando un
+      error ya que el resto de metodos para validar aplican para strings y no para nil.
 
-  Este metodo es utilizado para validar las opciones recibidas en los comandos de appointments, ya que son varias y todas deben cumplir la misma condicion.
+    Este metodo es utilizado para validar las opciones recibidas en los comandos de appointments, ya que son varias y todas deben cumplir la misma condicion.
 
   Todas estas funciones estan declaradas en este modulo ya que son metodos de un uso mas general y no exclusivos del comportamiento de una clase como professionals y appointments.
 
@@ -53,25 +53,25 @@ Como se mencionó antes, este modulo implementa distintas funciones que son de u
 
 Para la implementacion de la clase se definió que como comportamiento de clase que se pueda: 
 
-  >Verificar la existencia de un profesional en el sistema, esto se hace en el metodo exist? 
-  >Listar los profesionales del sistema (metodo list_professionals)
-  >Definir instancias de la clase en base a un nombre recibido por parametro (initialize)
+  - Verificar la existencia de un profesional en el sistema, esto se hace en el metodo exist?
+  - Listar los profesionales del sistema (metodo list_professionals)
+  - Definir instancias de la clase en base a un nombre recibido por parametro (initialize)
 
 Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba mas coherente que un profesional sea el responsable de manejar su persistencia en el sistema.
 
 Los siguientes metodos son comportamientos de la instancia de professionals:
 
-  >create_professional_folder , que crea una carpeta con el nombre del profesional, tambien retornando un mensaje de operacion exitosa o fallida
-  >rename(newName), renombra la carpeta del professional por el nombre recibido por parametro, siguiendo la logica de devolver un mensaje segun el resultado de la operacion
-  >delete, elimina la carpeta del profesional, retornando un mensaje en caso de que sea exitosa o fallida la operacion, una carpeta no puede borrarse si el profesional posee turnos
+  - create_professional_folder , que crea una carpeta con el nombre del profesional, tambien retornando un mensaje de operacion exitosa o fallida
+  - rename(newName), renombra la carpeta del professional por el nombre recibido por parametro, siguiendo la logica de devolver un mensaje segun el resultado de la operacion
+  - delete, elimina la carpeta del profesional, retornando un mensaje en caso de que sea exitosa o fallida la operacion, una carpeta no puede borrarse si el profesional posee turnos
 
 Estos metodos devuelven un mensaje de tipo string segun el resultado de la operacion ya que se esperaba simular algo parecido a los codigos de ejecucion de salida de los programas en bash o C,pero de una forma mas amigable y entendible para el usuario.
 
 Cada metodo que se encarga de manipular los datos del sistema, posee una sentencia rescue y else para definir el mensaje a retornar, ya que puede darse el caso donde ocurra un error al ejecutar la operacion de creado,renombrado o borrado de un archivo, ejemplos de esto pueden ser la falta de permisos para escribir, entre otros.
 Además, se implementaron algunos metodos de los comandos de appointments en la clase profesional ya que tenia sentido que un profesional posea dicho comportamiento.
 Los metodos son:
-  >Eliminar todos los turnos de un profesional(cancel_appointments)
-  >Listar en pantalla el detalle de todos los turnos de un profesional(list_appointments)
+  - Eliminar todos los turnos de un profesional(cancel_appointments)
+  - Listar en pantalla el detalle de todos los turnos de un profesional(list_appointments)
 
 
 # El codigo de los commands de profesionales
@@ -87,9 +87,9 @@ El modo de validacion de los parametros es mediante el uso de comprobar que los 
 
 
 Para la implementacion de la clase se definió que como comportamiento de clase que se pueda: 
-  >Verificar la existencia de un turno en el sistema, esto se hace en el metodo exist?.
-  >obtener una instancia de la clase a partir de un archivo, esto implica leer los datos del archivo y guardarlos en los atributos de la clase.
-  >Definir instancias de la clase en base a los datos recibidos por parametro(initialize).
+  - Verificar la existencia de un turno en el sistema, esto se hace en el metodo exist?.
+  - obtener una instancia de la clase a partir de un archivo, esto implica leer los datos del archivo y guardarlos en los atributos de la clase.
+  - Definir instancias de la clase en base a los datos recibidos por parametro(initialize).
 
 Respecto a los atributos de la clase, se opto por el uso de un hash para guardar los detalles ya que el guardarlos de esta forma simplificaba la implementacion de varios metodos de la clase, como el guardar la informacion en un archivo, editar ciertos campos de un turno, etc.
 
@@ -102,11 +102,11 @@ Se incluyo tambien un metodo my_path que cumple una funcion parecida al metodo s
 Al igual que la clase professionals, se decidió que los metodos que incluyeran manipulacion de los archivos contaran con un manejo de excepciones para el caso donde haya un error al ejecutar una operacion sobre el archivo, y devolver un mensaje de exito o fallo de forma similar a los codigos de error de lenguajes como C y bash, pero que a la vez sean mas amigables y explicativos para el usuario de la herramienta.
 
 Los siguientes metodos son comportamientos de la instancia de appointments:
-  >save_file , utilizado para guardar los detalles de un turno en un archivo de texto plano de extension .paf, este metodo es necesario tanto para crear como para editar un turno. Devuelve un mensaje segun el resultado de la operacion.
-  >show , cuya funcion es imprimir en pantalla los detalles de un turno en un formato clave : valor , de forma que se pueda conocer cual es cada campo.
-  >rename , utilizado para renombrar el turno ( reagendar), devolviendo un mensaje tambien segun el resultado de la operacion.
-  >edit_file , utilizado para actualizar los campos de un turno, primero cambiando los valores de las claves del hash y posteriormente sobrescribiendo la informacion del archivo.
-  >cancel , utilizado para eliminar un turno. Devuelve un mensaje segun el resultado de la operacion al igual que el resto de metodos que manipulan archivos.
+  - save_file , utilizado para guardar los detalles de un turno en un archivo de texto plano de extension .paf, este metodo es necesario tanto para crear como para editar un turno. Devuelve un mensaje segun el resultado de la operacion.
+  - show , cuya funcion es imprimir en pantalla los detalles de un turno en un formato clave : valor , de forma que se pueda conocer cual es cada campo.
+  - rename , utilizado para renombrar el turno ( reagendar), devolviendo un mensaje tambien segun el resultado de la operacion.
+  - edit_file , utilizado para actualizar los campos de un turno, primero cambiando los valores de las claves del hash y posteriormente sobrescribiendo la informacion del archivo.
+  - cancel , utilizado para eliminar un turno. Devuelve un mensaje segun el resultado de la operacion al igual que el resto de metodos que manipulan archivos.
 
 
 # El codigo de los comandos del modulo appointment
