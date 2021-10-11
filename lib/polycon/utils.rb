@@ -1,7 +1,7 @@
 module Polycon
     module Utils
         def self.ensure_polycon_exists
-            if not Dir.exist?(Dir.home << "/.polycon")
+            if not Dir.exist?(self.path)
                 warn "ADVERTENCIA: No se ha podido encontrar la carpeta .polycon.\nSe ha creado la carpeta .polycon en su directorio home para almacenar la informacion sobre profesionales y turnos"
                 Dir.mkdir(Dir.home << "/.polycon")
             end
