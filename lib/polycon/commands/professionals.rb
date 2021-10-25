@@ -15,13 +15,19 @@ module Polycon
           Utils.ensure_polycon_exists
           
           #validaciones del parametro recibido
-          if not Utils.valid_string?(name) #reviso que el nombre sea valido
+          if ! Utils.valid_string?(name) #reviso que el nombre sea valido
             warn "ERROR: El nombre de profesional #{name} no es valido"
           elsif Models::Professionals.exist?(name) #reviso que no exista el profesional
             warn "ERROR: El profesional #{name} ya existe en el sistema"
           else #todo correcto
             profesional = Models::Professionals.new(name)
-            puts profesional.create_professional_folder #se imprime en pantalla el mensaje resultante de crear una carpeta del professional
+            begin
+              profesional.create_professional_folder #Crea la carpeta del profesional
+            rescue #Mensaje en caso de que haya un error al crear la carpeta
+              puts "Ocurrio un error al crear la carpeta del profesional #{name}"
+            else #Mensaje de exito
+              puts "Se ha creado la carpeta del profesional #{name}"
+            end
           end
         end
       end
@@ -41,11 +47,17 @@ module Polycon
 
           if Utils.blank_string?(name)
             warn "ERROR: El nombre ingresado esta vacio"
-          elsif not Models::Professionals.exist?(name) #reviso que si existe el profesional
+          elsif ! Models::Professionals.exist?(name) #reviso que si existe el profesional
             warn "ERROR: El profesional #{name} no existe en el sistema"
           else #se puede intentar borrar el profesional
             profesional = Models::Professionals.new(name)
-            puts profesional.delete #se crea una carpeta en base al profesional creado
+            begin
+              profesional.delete #Elimina la carpeta del profesional
+            rescue SystemCallError #Mensaje en caso de que haya un error al eliminar la carpeta, es decir, que posea turnos
+              puts "El profesional #{name} posee turnos, por lo que no puede borrarse"
+            else #Mensaje de exito
+              puts "El profesional #{name} ha sido borrado del sistema"
+            end
           end
           
         end
@@ -80,15 +92,21 @@ module Polycon
           #validaciones antes de renombrar un archivo
           if Utils.blank_string?(old_name) #reviso si el nombre viejo esta en blanco
             warn "ERROR: El nombre de profesional ingresado esta vacio"
-          elsif not Models::Professionals.exist?(old_name) #reviso si no existe el profesional
+          elsif ! Models::Professionals.exist?(old_name) #reviso si no existe el profesional
             warn "ERROR: El profesional #{old_name} no existe en el sistema"
-          elsif not Utils.valid_string?(new_name) #reviso que el nombre sea valido
+          elsif ! Utils.valid_string?(new_name) #reviso que el nombre sea valido
             warn "ERROR: El nuevo nombre #{new_name} no es valido para un profesional"
           elsif Models::Professionals.exist?(new_name) #reviso que no exista un profesional con el nombre nuevo
             warn "ERROR: El profesional #{new_name} ya existe en el sistema"
           else
             profesional = Models::Professionals.new(old_name)
-            puts profesional.rename(new_name) #Se imprime el mensaje que devuelve el renombrar un profesional
+            begin
+              profesional.rename(new_name) #Se imprime el mensaje que devuelve el renombrar un profesional
+            rescue
+              puts "No pudo renombrarse el profesional #{old_name} a #{new_name}"
+            else
+              puts "Se renombró el profesional #{old_name} a #{new_name}"
+            end
           end
           #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end

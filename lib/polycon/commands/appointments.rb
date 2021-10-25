@@ -20,17 +20,23 @@ module Polycon
 
           #validado de parametros
           validation_result = Utils.check_options(professional: professional, name: name,surname: surname,phone: phone) #se guarda el resultado de validar los parametros en una variable para no llamarlo 2 veces
-          if not Utils.valid_date?(date) #reviso que la fecha ingresada sea correcta
+          if ! Utils.valid_date?(date) #reviso que la fecha ingresada sea correcta
             warn "ERROR: La fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
-          elsif not validation_result.empty? #reviso que el resto de parametros obligatorios recibidos sean validos
+          elsif ! validation_result.empty? #reviso que el resto de parametros obligatorios recibidos sean validos
             warn "#{validation_result}ERROR: Los datos recibidos para el turno no son correctos\nEjemplo de uso: ''2021-09-16_13-00' --professional='Alma Estevez' --name=Carlos --surname=Carlosi --phone=2213334567'"
-          elsif not Models::Professionals.exist?(professional) #reviso que el profesional no exista
+          elsif ! Models::Professionals.exist?(professional) #reviso que el profesional no exista
             warn "ERROR: No se encontró el profesional ingresado"
           elsif Models::Appointments.exist?(date,professional) #reviso que el turno para ese profesional no exista
             warn "ERROR: Ya existe el turno para el profesional #{professional} el dia #{date}"
           else #Los campos ingresados son correctos
             appointment = Models::Appointments.new(date,professional,surname,name,phone,notes)
-            puts appointment.save_file
+            begin
+              appointment.save_file #Guarda los datos del turno
+            rescue #Mensaje en caso de que haya un error al guardar los datos
+              puts "Ocurrió un error al guardar los datos del turno del dia #{date} para el profesional #{professional}, por favor intentelo de nuevo"
+            else #Mensaje de exito
+              puts "Se han guardado los datos del turno del dia #{date} para el profesional #{professional}"
+            end
           end
         end
       end
@@ -48,9 +54,9 @@ module Polycon
         def call(date:, professional: "")
           Utils.ensure_polycon_exists
           #validacion de que el profesional y la fecha existen
-          if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+          if Utils.blank_string?(professional) || ! Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema"
-          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+          elsif Utils.blank_string?(date) || ! Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
             warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
           else #se pueden mostrar los detalles del turno
             appointment = Models::Appointments.get_appointment(date,professional)
@@ -73,13 +79,20 @@ module Polycon
         def call(date:, professional: "")
           Utils.ensure_polycon_exists
           #validado de parametros
-          if Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+          if Utils.blank_string?(professional) || ! Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
-          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+          elsif Utils.blank_string?(date) || ! Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
             warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
           else #se puede intentar eliminar el turno
             appointment = Models::Appointments.get_appointment(date,professional)
-            puts appointment.cancel #muestro el mensaje que devuelve el eliminar un turno
+
+            begin
+              appointment.cancel #elimino el turno
+            rescue #caso de error si no se pudo eliminar
+              puts "No se ha podido cancelar el turno del profesional #{professional} del dia #{date}"
+            else #mensaje de exito
+              puts "Se ha cancelado el turno del dia #{date} del profesional #{professional}"
+            end
           end
         end
       end
@@ -97,11 +110,17 @@ module Polycon
           Utils.ensure_polycon_exists
           if Utils.blank_string?(professional)
             warn "ERROR: El profesional no puede ser una cadena vacia"
-          elsif not Models::Professionals.exist?(professional)
+          elsif ! Models::Professionals.exist?(professional)
             warn "ERROR: El profesional no existe en el sistema"
           else
             profesional = Models::Professionals.new(professional)
-            puts profesional.cancel_appointments
+            begin
+              profesional.cancel_appointments #elimino los turnos del profesional
+            rescue #caso de error si no se pudo cancelar todos los turnos
+              puts "No se pudo completar el cancelado de todos los turnos del profesional #{professional}"
+            else #mensaje de exito
+              puts "Se ha completado el cancelado de todos los turnos del profesional #{professional}"
+            end
           end
           #warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
@@ -122,7 +141,7 @@ module Polycon
           Utils.ensure_polycon_exists
           if Utils.blank_string?(professional)
             warn "ERROR: El profesional no puede ser una cadena vacia"
-          elsif not Models::Professionals.exist?(professional)
+          elsif ! Models::Professionals.exist?(professional)
             warn "ERROR: El profesional no existe en el sistema"
           else
             profesional = Models::Professionals.new(professional)
@@ -145,17 +164,23 @@ module Polycon
         def call(old_date:, new_date:, professional: "")
           Utils.ensure_polycon_exists
           #validado de parametros
-          if not Utils.valid_date?(new_date) #reviso si la fecha recibida es un formato valido
+          if ! Utils.valid_date?(new_date) #reviso si la fecha recibida es un formato valido
             warn "ERROR: La nueva fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
-          elsif Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+          elsif Utils.blank_string?(professional) || ! Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
-          elsif Utils.blank_string?(old_date) or not Models::Appointments.exist?(old_date,professional) #reviso que si existe el turno para el profesional
+          elsif Utils.blank_string?(old_date) || ! Models::Appointments.exist?(old_date,professional) #reviso que si existe el turno para el profesional
             warn "ERROR: El turno del dia #{old_date} del profesional #{professional} no existe en el sistema"
           elsif Models::Appointments.exist?(new_date,professional) #reviso que el nuevo turno para ese profesional no exista
             warn "ERROR: Ya existe el turno para el profesional #{professional} el dia #{new_date}"
           else #se puede intentar eliminar el turno
             appointment = Models::Appointments.get_appointment(old_date,professional)
-            puts appointment.rename(new_date) #muestro el mensaje que devuelve el eliminar un turno
+            begin
+              appointment.rename(new_date) #renombro el turno
+            rescue #Mensaje de error en caso de que no se pudo renombrar
+              puts "No se ha podido reagendar el turno del dia #{old_date} al dia #{new_date}"
+            else #Mensaje de extio si se renombro sin problemas
+              puts "Se ha reagendado el turno del profesional #{professional} del dia #{old_date} al dia #{new_date}"
+            end
           end
         end
       end
@@ -180,15 +205,22 @@ module Polycon
           Utils.ensure_polycon_exists
           #validado de parametros
           check_result = Utils.check_options(options) #reviso que los campos a modificar no sean strings vacios
-          if not check_result.empty?
+          if ! check_result.empty?
             warn "#{check_result}ERROR: Las opciones para editar no son validas"
-          elsif Utils.blank_string?(professional) or not Models::Professionals.exist?(professional) #reviso si existe el profesional
+          elsif Utils.blank_string?(professional) || ! Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
-          elsif Utils.blank_string?(date) or not Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
+          elsif Utils.blank_string?(date) || ! Models::Appointments.exist?(date,professional) #reviso que si existe el turno para el profesional
             warn "ERROR: El turno del dia #{date} del profesional #{professional} no existe en el sistema"
           else #se pueden editar los campos del turno
             appointment = Models::Appointments.get_appointment(date,professional)
-            puts appointment.edit_file(options) #Imprime el mensaje de editar el turno
+            
+            begin
+              appointment.edit_file(options) #Edita los datos del turno
+            rescue #Mensaje en caso de que haya un error al editar los datos
+              puts "Ocurrió un error al editar los datos del turno del dia #{date} para el profesional #{professional}, por favor intentelo de nuevo"
+            else #Mensaje de exito
+              puts "Se han editado los datos del turno del dia #{date} para el profesional #{professional}"
+            end
           end
         end
       end

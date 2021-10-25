@@ -31,14 +31,10 @@ module Polycon
             end
 
             def save_file
-                #guarda en un archivo .paf los datos del turno y devuelve un mensaje de operacion exitosa o un mensaje de error en caso que no se pueda
+                #guarda en un archivo .paf los datos del turno
                 File.open("#{my_path}/#{date}.paf", "w") do |file| 
                     details.values.each { |value| file.puts "#{value}"}
                 end
-                rescue
-                    "Ocurrió un error al guardar los datos del turno del dia #{date} para el profesional #{professional}, por favor intentelo de nuevo"
-                else
-                    "Se han guardado los datos del turno del dia #{date} para el profesional #{professional}"
             end
 
             def show
@@ -47,12 +43,8 @@ module Polycon
             end
 
             def rename(new_date)
-                #cambia el nombre del archivo por la fecha recibida por parametro y retorna un mensaje de exito si se pudo renombrar o un mensaje de error en caso contrario
+                #cambia el nombre del archivo por la fecha recibida por parametro
                 File.rename("#{my_path}/#{date}.paf","#{self.my_path}/#{new_date}.paf")
-                rescue
-                    "No se ha podido reagendar el turno del dia #{date} al dia #{new_date}"
-                else
-                    "Se ha reagendado el turno del profesional #{professional} del dia #{date} al dia #{new_date}"
             end
 
             def edit_file(**fields)
@@ -62,12 +54,8 @@ module Polycon
             end
 
             def cancel
-                #elimina el turno y devuelve un mensaje de exito si fue eliminado o un mensaje de error en caso contrario
+                #elimina el archivo correspondiente al turno
                 File.delete("#{my_path}/#{date}.paf")
-                rescue
-                    "No se ha podido cancelar el turno del profesional #{professional} del dia #{date}"
-                else
-                    "Se ha cancelado el turno del dia #{date} del profesional #{professional}"
             end
         end
     end
