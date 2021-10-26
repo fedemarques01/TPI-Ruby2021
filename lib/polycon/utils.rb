@@ -26,9 +26,18 @@ module Polycon
         end
         
         require 'date' #modulo necesario para la validacion de fechas
-        def self.valid_date?(date)
-            #devuelve true o false si la fecha recibida por parametro es una fecha valida con formato AAAA-MM-DD HH:II
+        def self.valid_date_with_hour?(date)
+            #devuelve true o false si la fecha recibida por parametro es una fecha valida con formato AAAA-MM-DD_HH-II
             DateTime.strptime(date,"%Y-%m-%d_%H-%M")
+            rescue
+                false
+            else
+                true
+        end
+
+        def self.valid_date?(date)
+            #devuelve true o false si es una fecha valida en formato AAAA-MM-DD
+            DateTime.strptime(date,"%Y-%m-%d")
             rescue
                 false
             else

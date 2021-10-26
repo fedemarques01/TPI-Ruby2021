@@ -20,9 +20,22 @@ module Polycon
                 #obtiene una instancia appointment a partir de un archivo existente
                 array = []
                 File.open("#{Polycon::Utils.path}/#{professional}/#{date}.paf","r") do |file|
-                    file.each { |line| array << line }
+                    file.each { |line| array << line.chomp }
                 end
                 new(date, professional,*array)
+            end
+
+            def self.list_all(date,professional)
+                #metodo que genera un arreglo con todos los turnos del sistema en una fecha especifica, opcionalmente filtrados por un profesional, sera un arreglo vacio si no hay turnos
+                if professional #caso donde recibo un profesional
+                    prof = Professionals.new(professional)
+                    prof.list_appointments(date) #genero un arreglo con los turnos del profesional
+                else 
+                    Professionals.list_professionals.inject([]) do |turnos,prof| #recorro todos los profesionales
+                        pr = Professionals.new(prof)
+                        turnos.concat(pr.list_appointments(date)) #guardo los turnos del profesional en un arreglo
+                    end
+                end
             end
 
             def my_path
@@ -40,6 +53,11 @@ module Polycon
             def show
                 #imprime en pantalla los datos de un turno formateados de forma nombre : valor
                 details.each {|key,value| puts "#{key} : #{value}"}
+            end
+
+            def to_s
+                #metodo para retornar una representacion del turno , esta representacion posee el nombre y apellido del paciente y el profesional
+                "Prof. #{professional}\nPaciente #{details[:surname]} #{details[:name]}"
             end
 
             def rename(new_date)

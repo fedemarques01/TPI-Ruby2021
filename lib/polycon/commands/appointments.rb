@@ -20,7 +20,7 @@ module Polycon
 
           #validado de parametros
           validation_result = Utils.check_options(professional: professional, name: name,surname: surname,phone: phone) #se guarda el resultado de validar los parametros en una variable para no llamarlo 2 veces
-          if ! Utils.valid_date?(date) #reviso que la fecha ingresada sea correcta
+          if ! Utils.valid_date_with_hour?(date) #reviso que la fecha ingresada sea correcta
             warn "ERROR: La fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
           elsif ! validation_result.empty? #reviso que el resto de parametros obligatorios recibidos sean validos
             warn "#{validation_result}ERROR: Los datos recibidos para el turno no son correctos\nEjemplo de uso: ''2021-09-16_13-00' --professional='Alma Estevez' --name=Carlos --surname=Carlosi --phone=2213334567'"
@@ -145,7 +145,15 @@ module Polycon
             warn "ERROR: El profesional no existe en el sistema"
           else
             profesional = Models::Professionals.new(professional)
-            profesional.list_appointments(date)
+            turnos = profesional.list_appointments(date)
+            if turnos.empty?
+              puts "No hay turnos cargados para este profesional"
+            else
+              turnos.each { |turno| 
+                puts "Date : #{turno.date}hs"
+                turno.show #Muestra en consola los detalles del turno
+                puts "---------------------------------"}
+            end
           end
         end
       end
@@ -164,7 +172,7 @@ module Polycon
         def call(old_date:, new_date:, professional: "")
           Utils.ensure_polycon_exists
           #validado de parametros
-          if ! Utils.valid_date?(new_date) #reviso si la fecha recibida es un formato valido
+          if ! Utils.valid_date_with_hour?(new_date) #reviso si la fecha recibida es un formato valido
             warn "ERROR: La nueva fecha ingresada no es correcta, asegurese que este en formato 'AAAA-MM-DD_HH-II'"
           elsif Utils.blank_string?(professional) || ! Models::Professionals.exist?(professional) #reviso si existe el profesional
             warn "ERROR: El profesional #{professional} no existe en el sistema o no fue especificado"
@@ -220,6 +228,43 @@ module Polycon
               puts "Ocurrió un error al editar los datos del turno del dia #{date} para el profesional #{professional}, por favor intentelo de nuevo"
             else #Mensaje de exito
               puts "Se han editado los datos del turno del dia #{date} para el profesional #{professional}"
+            end
+          end
+        end
+      end
+
+      class ListAll < Dry::CLI::Command
+        desc 'List all appointments on a certain date, optionally filtered by a professional'
+
+        argument :date, required: true, desc: 'Full date of the appointments (should be in format AAAA-MM-DD)'
+        option :professional, required: false, desc: 'Professional to filter appointments by'
+
+        example [
+          '"2021-09-16" # Lists all appointments on the specified date',
+          '"2021-09-16" --professional="Alma Estevez" # Lists appointments on the specified date for Alma Estevez'
+        ]
+
+        def call(date:, professional: nil)
+          Utils.ensure_polycon_exists
+
+          #valido el profesional si recibo uno
+          if ! professional.nil?
+            if ! Utils.valid_string?(professional) #Verifico que sea una cadena valida
+              abort("ERROR: El profesional no puede ser una cadena vacia")
+            elsif ! Models::Professionals.exist?(professional) #verifico que exista
+              abort("ERROR: El profesional ingresado no existe")
+            end
+          end
+
+          #Si el profesional es valido, valido la fecha
+          if ! Utils.valid_date?(date) #valido el parametro de fecha
+            warn "ERROR: La fecha del turno no es valida, debe estar en formato AAAA-MM-DD"
+          else
+            appointments = Models::Appointments.list_all(date,professional)
+            if appointments.empty?
+              puts "No hay turnos para esa fecha"
+            else
+              puts appointments
             end
           end
         end
