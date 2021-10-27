@@ -38,6 +38,14 @@ module Polycon
                 end
             end
 
+            def self.list_all_week(start_date,professional)
+                #metodo que retorna un hash con un arreglo de turnos por cada uno de los 7 dias siguientes a la fecha recibida por parametro, opcionalmente filtrados por profesional
+                (start_date..(start_date+6)).inject({}) { |appointments, date|
+                    appointments[date.to_s] = list_all(date.to_s,professional)
+                    appointments
+                }
+            end
+
             def my_path
                 #devuelve la ruta donde se encuentra ubicado el turno, por ejemplo /home/.polycon/Alma Estevez
                 "#{Polycon::Utils.path}/#{professional}"

@@ -44,6 +44,11 @@ module Polycon
                 true
         end
 
+        def self.get_date_object(date)
+            #devuelve un objeto de tipo date en base a la fecha recibida por parametro
+            Date.strptime(date,"%Y-%m-%d")
+        end
+
         #Este metodo recibe un hash variable de opciones obligatorias y revisa que las opciones ingresadas no sean strings vacios o solo de espacios
         #Retorna un mensaje donde especifica los parametros que son strings vacios o de solo espacios
         #En el caso donde ninguno este vacio, retorna un string vacio
@@ -56,5 +61,6 @@ module Polycon
             }
             message
         end
+
     end
 end

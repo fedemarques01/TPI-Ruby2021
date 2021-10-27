@@ -233,7 +233,7 @@ module Polycon
         end
       end
 
-      class ListAll < Dry::CLI::Command
+      class ListAllDate < Dry::CLI::Command
         desc 'List all appointments on a certain date, optionally filtered by a professional'
 
         argument :date, required: true, desc: 'Full date of the appointments (should be in format AAAA-MM-DD)'
@@ -266,6 +266,39 @@ module Polycon
             else
               puts appointments
             end
+          end
+        end
+      end
+
+      class ListAllWeek < Dry::CLI::Command
+        desc 'List all appointments on the next 7 days of a certain date, optionally filtered by a professional'
+
+        argument :date, required: true, desc: 'Full date of the appointments (should be in format AAAA-MM-DD)'
+        option :professional, required: false, desc: 'Professional to filter appointments by'
+
+        example [
+          '"2021-09-16" # Lists all appointments on the next 7 days of the specified date',
+          '"2021-09-16" --professional="Alma Estevez" # Lists appointments on the next 7 days of the specified date for Alma Estevez'
+        ]
+
+        def call(date:, professional: nil)
+          Utils.ensure_polycon_exists
+
+          #valido el profesional si recibo uno
+          if ! professional.nil?
+            if ! Utils.valid_string?(professional) #Verifico que sea una cadena valida
+              abort("ERROR: El profesional no puede ser una cadena vacia")
+            elsif ! Models::Professionals.exist?(professional) #verifico que exista
+              abort("ERROR: El profesional ingresado no existe")
+            end
+          end
+
+          #Si el profesional es valido, valido la fecha
+          if ! Utils.valid_date?(date) #valido el parametro de fecha
+            warn "ERROR: La fecha del turno no es valida, debe estar en formato AAAA-MM-DD"
+          else
+            appointments = Models::Appointments.list_all_week(Utils.get_date_object(date),professional)
+            puts appointments
           end
         end
       end
