@@ -1,5 +1,9 @@
 module Polycon
     module Utils
+
+        require 'date' #modulo necesario para la validacion de fechas
+
+        
         def self.ensure_polycon_exists
             if ! Dir.exist?(self.path)
                 warn "ADVERTENCIA: No se ha podido encontrar la carpeta .polycon.\nSe ha creado la carpeta .polycon en su directorio home para almacenar la informacion sobre profesionales y turnos"
@@ -7,8 +11,20 @@ module Polycon
             end
         end
 
+        def self.ensure_polycon_schedule_exists
+            if ! Dir.exist?(self.report_path)
+                warn"ADVERTENCIA: No se ha podido encontrar la carpeta .polycon-schedules.\nSe ha creado la carpeta .polycon-schedules en su directorio home para almacenar las grillas exportadas"
+                Dir.mkdir(self.report_path)
+            end
+        end
+
         def self.path
             Dir.home << "/.polycon"
+        end
+
+        def self.report_path
+            #Devuelve la ruta hacia la carpeta donde se guardan los reportes
+            Dir.home << "/.polycon-schedule"
         end
 
         def self.valid_string?(name)
@@ -25,7 +41,7 @@ module Polycon
             name.strip.empty?
         end
         
-        require 'date' #modulo necesario para la validacion de fechas
+        
         def self.valid_date_with_hour?(date)
             #devuelve true o false si la fecha recibida por parametro es una fecha valida con formato AAAA-MM-DD_HH-II
             DateTime.strptime(date,"%Y-%m-%d_%H-%M")
@@ -44,9 +60,11 @@ module Polycon
                 true
         end
 
-        def self.get_date_object(date)
-            #devuelve un objeto de tipo date en base a la fecha recibida por parametro
-            Date.strptime(date,"%Y-%m-%d")
+        def self.get_week_as_string(date)
+            #devuelve un arreglo con los 7 dias de la semana de la fecha recibida por paremtro, cada elemento esta en formato string
+            date_object = Date.strptime(date,"%Y-%m-%d")
+            date_object = date_object - (date_object.wday - 1)%7 #obtengo el primer dia de la semana
+            (date_object..date_object+6).map{ |date| date.to_s.strip}
         end
 
         #Este metodo recibe un hash variable de opciones obligatorias y revisa que las opciones ingresadas no sean strings vacios o solo de espacios

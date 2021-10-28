@@ -246,7 +246,7 @@ module Polycon
 
         def call(date:, professional: nil)
           Utils.ensure_polycon_exists
-
+          Utils.ensure_polycon_schedule_exists
           #valido el profesional si recibo uno
           if ! professional.nil?
             if ! Utils.valid_string?(professional) #Verifico que sea una cadena valida
@@ -261,11 +261,13 @@ module Polycon
             warn "ERROR: La fecha del turno no es valida, debe estar en formato AAAA-MM-DD"
           else
             appointments = Models::Appointments.list_all(date,professional)
-            if appointments.empty?
-              puts "No hay turnos para esa fecha"
-            else
-              puts appointments
-            end
+            Export.export_pdf({date => appointments}, date)
+            # if appointments.empty?
+            #   puts "No hay turnos para esa fecha"
+            # else
+            #   puts appointments.map{ |a| a.schedule_format}
+            # end
+            puts "Se ha creado la grilla para el dia #{date} en la carpeta #{Utils.report_path}"
           end
         end
       end
@@ -297,7 +299,8 @@ module Polycon
           if ! Utils.valid_date?(date) #valido el parametro de fecha
             warn "ERROR: La fecha del turno no es valida, debe estar en formato AAAA-MM-DD"
           else
-            appointments = Models::Appointments.list_all_week(Utils.get_date_object(date),professional)
+            appointments = Models::Appointments.list_all_week(Utils.get_week_as_string(date),professional)
+            Export.export_pdf(appointments,*Utils.get_week_as_string(date))
             puts appointments
           end
         end

@@ -38,10 +38,10 @@ module Polycon
                 end
             end
 
-            def self.list_all_week(start_date,professional)
-                #metodo que retorna un hash con un arreglo de turnos por cada uno de los 7 dias siguientes a la fecha recibida por parametro, opcionalmente filtrados por profesional
-                (start_date..(start_date+6)).inject({}) { |appointments, date|
-                    appointments[date.to_s] = list_all(date.to_s,professional)
+            def self.list_all_week(week,professional)
+                #metodo que retorna un hash con un arreglo de turnos de cada dia de la semana recibida por parametro, opcionalmente filtrados por profesional
+                week.inject({}) { |appointments, date|
+                    appointments[date] = list_all(date,professional)
                     appointments
                 }
             end
@@ -63,9 +63,9 @@ module Polycon
                 details.each {|key,value| puts "#{key} : #{value}"}
             end
 
-            def to_s
+            def schedule_format
                 #metodo para retornar una representacion del turno , esta representacion posee el nombre y apellido del paciente y el profesional
-                "Prof. #{professional}\nPaciente #{details[:surname]} #{details[:name]}"
+                "Prof. #{professional} - #{details[:surname]} #{details[:name]}"
             end
 
             def rename(new_date)
