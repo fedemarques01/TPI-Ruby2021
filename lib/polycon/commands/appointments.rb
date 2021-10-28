@@ -272,7 +272,7 @@ module Polycon
         option :professional, required: false, desc: 'Professional to filter appointments by'
 
         example [
-          '"2021-09-16" # Lists all appointments on the next 7 days of the specified date',
+          '"2021-09-16" # Lists all appointments of the week of the specified date',
           '"2021-09-16" --professional="Alma Estevez" # Lists appointments on the next 7 days of the specified date for Alma Estevez'
         ]
 
@@ -280,7 +280,7 @@ module Polycon
           Utils.ensure_polycon_exists
 
           #valido el profesional si recibo uno
-          if ! professional
+          if professional
             if ! Utils.valid_string?(professional) #Verifico que sea una cadena valida
               abort("ERROR: El profesional no puede ser una cadena vacia")
             elsif ! Models::Professionals.exist?(professional) #verifico que exista
