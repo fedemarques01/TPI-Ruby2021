@@ -11,20 +11,8 @@ module Polycon
             end
         end
 
-        def self.ensure_polycon_schedule_exists
-            if ! Dir.exist?(self.report_path)
-                warn"ADVERTENCIA: No se ha podido encontrar la carpeta .polycon-schedules.\nSe ha creado la carpeta .polycon-schedules en su directorio home para almacenar las grillas exportadas"
-                Dir.mkdir(self.report_path)
-            end
-        end
-
         def self.path
             Dir.home << "/.polycon"
-        end
-
-        def self.report_path
-            #Devuelve la ruta hacia la carpeta donde se guardan los reportes
-            Dir.home << "/.polycon-schedule"
         end
 
         def self.valid_string?(name)
@@ -49,6 +37,12 @@ module Polycon
                 false
             else
                 true
+        end
+
+        def self.report_path
+            #Devuelve la ruta hacia la carpeta donde se guardan las grillas generadas y si no existe la crea
+            Dir.mkdir(Dir.home << "/.polycon-schedules") unless Dir.exist?(Dir.home << "/.polycon-schedules") 
+            Dir.home << "/.polycon-schedules"
         end
 
         def self.valid_date?(date)
