@@ -62,16 +62,10 @@ module Polycon
         end
 
         #Este metodo recibe un hash variable de opciones obligatorias y revisa que las opciones ingresadas no sean strings vacios o solo de espacios
-        #Retorna un mensaje donde especifica los parametros que son strings vacios o de solo espacios
-        #En el caso donde ninguno este vacio, retorna un string vacio
+        #Retorna un hash con los parametros que son strings vacios
+        #En el caso donde ninguno este vacio, retorna un hash vacio
         def self.check_options(**options)
-            message = ""
-            options.each { 
-                |key,value| if self.blank_string?(value)
-                message << "El parametro #{key} no puede ser una cadena vacia\n" 
-            end
-            }
-            message
+            options.select { |key,value| self.blank_string?(value) }
         end
 
     end

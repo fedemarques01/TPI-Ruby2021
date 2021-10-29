@@ -13,28 +13,35 @@ module Polycon
             end
 
             def create_professional_folder
-                #crea una carpeta con el nombre del profesional y devuelve un mensaje de exito si fue creada o un mensaje de error en caso contrario
+                #crea una carpeta con el nombre del profesional y devuelve true si fue creada o false si ocurrio un error
                 Dir.mkdir("#{Polycon::Utils.path}/#{name}")
+                rescue
+                    false
+                else
+                    true
             end
 
             def delete
-                #Elimina la carpeta del profesional, si tiene turnos devuelve una excepcion de tipo SystemCallError
+                #Elimina la carpeta del profesional, devuelve true si fue eliminada o false si posee turnos
                 Dir.delete("#{Polycon::Utils.path}/#{name}")
+                rescue SystemCallError
+                    false
+                else
+                    true
             end
 
             def self.list_professionals
-                #Devuelve un arreglo con el nombre de todos los profesionales creados en el sistema, será un mensaje de que no hay profesionales si no hay ninguno creado
-                if Dir.children(Polycon::Utils.path).empty?
-                    "No hay profesionales cargados en el sistema"
-                else
-                    Dir.children(Polycon::Utils.path)
-                end
+                #Devuelve un arreglo con el nombre de todos los profesionales creados en el sistema, si no hay profesionales es un arreglo vacio
+                Dir.children(Polycon::Utils.path)
             end
 
             def rename(newName)
                 #Modifica el nombre de la carpeta del profesional por el nuevo nombre
                 File.rename("#{Polycon::Utils.path}/#{name}", "#{Polycon::Utils.path}/#{newName}")
-                
+                rescue
+                    false
+                else
+                    true
             end
 
             def list_appointments(date)

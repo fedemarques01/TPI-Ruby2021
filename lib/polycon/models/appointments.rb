@@ -8,7 +8,7 @@ module Polycon
                 @date = date
                 @professional = professional
                 @details = {surname: surname,name: name, phone: phone}
-                details["notes"] = notes unless notes.nil?
+                details[:notes] = notes unless notes.nil?
             end
 
             def self.exist?(date, professional)
@@ -52,10 +52,14 @@ module Polycon
             end
 
             def save_file
-                #guarda en un archivo .paf los datos del turno
+                #guarda en un archivo .paf los datos del turno, retorna true si fue guardado y false si ocurrio un error
                 File.open("#{my_path}/#{date}.paf", "w") do |file| 
                     details.values.each { |value| file.puts "#{value}"}
                 end
+                rescue
+                    false
+                else
+                    true
             end
 
             def show
@@ -69,8 +73,12 @@ module Polycon
             end
 
             def rename(new_date)
-                #cambia el nombre del archivo por la fecha recibida por parametro
+                #cambia el nombre del archivo por la fecha recibida por parametro, devuelve true o false dependiendo del exito de la operacion
                 File.rename("#{my_path}/#{date}.paf","#{self.my_path}/#{new_date}.paf")
+                rescue
+                    false
+                else
+                    true
             end
 
             def edit_file(**fields)
@@ -80,8 +88,12 @@ module Polycon
             end
 
             def cancel
-                #elimina el archivo correspondiente al turno
+                #elimina el archivo correspondiente al turno, devuelve true o false segun el resultado de la operacion
                 File.delete("#{my_path}/#{date}.paf")
+                rescue
+                    false
+                else
+                    true
             end
         end
     end

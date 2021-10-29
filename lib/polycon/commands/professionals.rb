@@ -21,13 +21,10 @@ module Polycon
             warn "ERROR: El profesional #{name} ya existe en el sistema"
           else #todo correcto
             profesional = Models::Professionals.new(name)
-            begin
-              profesional.create_professional_folder #Crea la carpeta del profesional
-            rescue #Mensaje en caso de que haya un error al crear la carpeta
-              puts "Ocurrio un error al crear la carpeta del profesional #{name}"
-            else #Mensaje de exito
-              puts "Se ha creado la carpeta del profesional #{name}"
-            end
+            puts (if profesional.create_professional_folder  #Crea la carpeta del profesional
+              then "Se ha creado la carpeta del profesional #{name}" #Mensaje de exito
+              else "Ocurrio un error al crear la carpeta del profesional #{name}" #Mensaje de error
+              end)
           end
         end
       end
@@ -51,13 +48,10 @@ module Polycon
             warn "ERROR: El profesional #{name} no existe en el sistema"
           else #se puede intentar borrar el profesional
             profesional = Models::Professionals.new(name)
-            begin
-              profesional.delete #Elimina la carpeta del profesional
-            rescue SystemCallError #Mensaje en caso de que haya un error al eliminar la carpeta, es decir, que posea turnos
-              puts "El profesional #{name} posee turnos, por lo que no puede borrarse"
-            else #Mensaje de exito
-              puts "El profesional #{name} ha sido borrado del sistema"
-            end
+            puts (if profesional.delete #Elimina la carpeta del profesional
+              then "El profesional #{name} ha sido borrado del sistema"#Mensaje de exito
+              else "El profesional #{name} posee turnos, por lo que no puede borrarse" #Mensaje de error
+              end)
           end
           
         end
@@ -72,7 +66,11 @@ module Polycon
 
         def call(*)
           Utils.ensure_polycon_exists
-          puts Models::Professionals.list_professionals #obtengo los profesionales y los imprimo en la consola
+          professionals = Models::Professionals.list_professionals #obtengo los profesionales
+          puts (if professionals.empty? 
+            then "No hay profesionales cargados en el sistema" #caso donde no hay profesionales
+            else professionals #imprimo en pantalla los profesionales 
+            end )
         end
       end
 
@@ -100,15 +98,11 @@ module Polycon
             warn "ERROR: El profesional #{new_name} ya existe en el sistema"
           else
             profesional = Models::Professionals.new(old_name)
-            begin
-              profesional.rename(new_name) #Se imprime el mensaje que devuelve el renombrar un profesional
-            rescue
-              puts "No pudo renombrarse el profesional #{old_name} a #{new_name}"
-            else
-              puts "Se renombró el profesional #{old_name} a #{new_name}"
-            end
+            puts (if profesional.rename(new_name) #Se imprime el mensaje que devuelve el renombrar un profesional
+              then "Se renombró el profesional #{old_name} a #{new_name}"#Mensaje de exito
+              else "No pudo renombrarse el profesional #{old_name} a #{new_name}" #Mensaje de error
+              end)
           end
-          #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
     end
