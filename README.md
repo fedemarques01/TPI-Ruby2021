@@ -6,8 +6,58 @@ Este es una herramienta para gestionar la agenda de turnos de un policonsultorio
 Esta herramienta fue implementada como proyecto para el Taller de Tecnologias de Producción de Software Opcion Ruby
 de la Universidad Nacional de La Plata.
 
+# Decisiones de diseño de la segunda entrega
 
-## Decisiones de diseño
+Este apartado contempla las modificaciones que se le hicieron al codigo tanto para agregar funcionalidades como para mejorar la funcionalidad existente, correspondiente a la segunda entrega del trabajo
+
+## Corecciones de la primer entrega
+
+Se modificaron distintos metodos para aplicar las corecciones que fueron marcadas en la primer entrega, la más importante es que se cambio el que los metodos retornasen un string como mensaje de exito o error, sino que ahora devuelven un metodo true o false dependiendo del resultado de la operacion realizada, y en base al resultado obtenido se genera un mensaje distinto en el modulo de comandos, ya que es el encargado de generar y mostrar los mensajes al usuario.
+
+Los metodos modificados son los metodos de creacion, edicion y borrado de archivos de los modulos de appointments y profesionals, asi como el metodo listar profesionales que devuelve un arreglo vacio y se actua en consecuencia a ese y en el modulo de Utils se modifico el metodo `check_options` para que devuelva un hash con los parametros recibidos que sean cadenas vacias, y se actua en el comando en base al contenido del hash.
+
+## Los metodos list-all-day y list-all-week
+
+En el modelo de appointments, se agregaron las 2 nuevas funcionalidades solicitadas para esta entrega, se encuentran en el modelo de appointments como un metodo de clase, principalmente porque tenia sentido que el poder devolver todos los turnos de una fecha o semana particular sea un comportamiento correspondiente a la clase, este metodo reutiliza metodos ya implementados en la primer etapa de la entrega, generando un arreglo de turnos en el caso de un dia particular, y un hash con los turnos de cada dia de la semana.
+
+## Modificaciones del modulo Utils
+
+En el modulo utils se implementaron nuevos metodos de utilidad para la realizacion de las nuevas funcionalidades solicitadas.
+
+Entre estos se encuentran un metodo para validar la fecha a utilizar para filtrar (`valid_date?`), principalmente para que el usuario pueda conocer el formato de fecha que debe utilizar para filtrar efectivamente los turnos.
+
+Además, se implemento un metodo llamado `get_week_as_string` cuyo objetivo es retornar un arreglo con las fechas de la semana a la cual corresponde la fecha recibida por parametro, es decir, que si yo envio la fecha Jueves 28 de octubre, recibire un arreglo de fechas que comprende desde el dia Lunes 25 de octubre hasta el dia Domingo 31 de octubre.
+
+Tambien se agrego el metodo `report_path` que devuelve la ruta hacia la carpeta donde se guardan los documentos que se exportan
+
+## Conceciones respecto al formato de la grilla de turnos
+
+Para generar las grillas de turnos, se tuvieron en cuenta las siguientes conseciones:
+  - La grilla muestra informacion en bloques de duracion fija, estos bloques son de 30 minutos, cada turno no dura más de 30 minutos, es decir, que no se superpone con el turno siguiente.
+  - De igual forma, los turnos de un mismo profesional no se solapan entre ellos, no hay sobreturnos. Si esta contemplado el caso donde hayan varios turnos de distintos profesionales en el mismo bloque de tiempo.
+  - Los turnos se dan siempre respetando el horario de comienzo de cada bloque de la grilla
+  - Se asumió que el horario de apertura del policonsultorio es de 9hs a 20hs, por eso los bloques de tiempo de la grilla solo contemplan desde las 9hs hasta las 19.30hs (ya que el ultimo turno dura de 19:30 a 20hs).
+
+El horario de apertura del policonsultorio aun asi puede modificarse al horario que se solicite, de momento se estimo ese horario ya que era lo más realista.
+
+## Extension del documento y gemas utilizadas
+
+Para generar las grillas de turnos se utilizo la gema `Prawn`, una gema que se utiliza para generar documentos PDF con distintos elementos dentro, desde texto hasta dibujos, graficos e imagenes. Para obtener el formato de la grilla, se utilizo adicionalmente la gema suboficial `prawn-table`, que brinda soporte para generar tablas en PDFs utilizando Prawn. 
+
+Desde un primer momento se opto por utilizar un documento .pdf para guardar las grillas generadas de los turnos, esto se debe más que nada a una preferencia personal hacia este tipo de formato, más que adicionalmente en la vida cotidiana se suelen utilizar más los PDF a comparacion de los documentos .html como documentos de texto rico.
+Una vez decidido el formato, se investigó sobre las distintas gemas que existen para generar documentos PDF utilizando código ruby, llegando a las gemas previamente mencionadas.
+
+Adicionalmente, se movio la logica de generacion del documento PDF a un nuevo modulo llamado Export, el cual se encarga de utilizar la gema Prawn y recibir los turnos ya procesados (esto quiere decir que solo se reciben los turnos de la o las fechas a procesar ya filtrados por profesional si se proveyó uno) para generar un pdf con la grilla de turnos solicitada.
+
+Para el guardado de archivos en el modulo Export ,ya que es parte de la funcionalidad para exportar a un archivo pdf, se incorporaron metodos que generan el nombre del archivo en base al profesional buscado y la fecha a procesar, en el caso de una semana el nombre contendrá solo la fecha de inicio de la semana.
+
+Los grillas generadas son guardadas automaticamente en una nueva carpeta llamada .polycon-schedules, que en caso de no existir se crea. La ruta hacia esta carpeta es informada al usuario una vez que se ha generado la grilla, por lo que siempre se puede saber claramente donde estan guardados los pdfs generados.
+
+## Nuevas dependencias
+
+Ya que se incorporaron nuevas gemas, es necesario hacer un `bundle install` más alla de ya haber clonado el repositorio para la primer entrega para que se puedan instalar las nuevas dependencias necesarias para generar el documento pdf con los turnos para un dia o semana particular.
+
+# Decisiones de diseño de la primer entrega
 
 
 Para implementar los modelos se creo un modulo Models dentro de Polycon que englobe el modelado de clases Professionals y Appointments, estas clases pueden encontrarse en `lib/polycon/models` en los archivos
@@ -39,7 +89,7 @@ Como se mencionó antes, este modulo implementa distintas funciones que son de u
   >check_options :
   Este metodo recibe un hash por parametro ( puede ser explicito o implicito ) y valida elemento por elemento que no sean strings vacios, devolviendo un mensaje que contiene las claves que no cumplieron esta condicion, para luego informarlas al usuario y que pueda saber que parametro ingresado no fue valido.Este metodo es utilizado para validar las opciones recibidas en los comandos de appointments, ya que son varias y todas deben cumplir la misma condicion.
 
-  Todas estas funciones estan declaradas en este modulo ya que son metodos de un uso mas general y no exclusivos del comportamiento de una clase como professionals y appointments.
+  Todas estas funciones estan declaradas en este modulo ya que son metodos de un uso más general y no exclusivos del comportamiento de una clase como professionals y appointments.
 
 
 ## Sobre la clase Professionals
@@ -53,7 +103,7 @@ Para la implementacion de la clase se definió que como comportamiento de clase 
 
   -Definir instancias de la clase en base a un nombre recibido por parametro (initialize)
 
-Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba mas coherente que un profesional sea el responsable de manejar su persistencia en el sistema.
+Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba más coherente que un profesional sea el responsable de manejar su persistencia en el sistema.
 
 Los siguientes metodos son comportamientos de la instancia de professionals:
 
@@ -64,7 +114,7 @@ Los siguientes metodos son comportamientos de la instancia de professionals:
   -delete, elimina la carpeta del profesional, retornando un mensaje en caso de que sea exitosa o fallida la operacion, una carpeta no puede borrarse si el profesional posee turnos
 
 
-Estos metodos devuelven un mensaje de tipo string segun el resultado de la operacion ya que se esperaba simular algo parecido a los codigos de ejecucion de salida de los programas en bash o C,pero de una forma mas amigable y entendible para el usuario.
+Estos metodos devuelven un mensaje de tipo string segun el resultado de la operacion ya que se esperaba simular algo parecido a los codigos de ejecucion de salida de los programas en bash o C,pero de una forma más amigable y entendible para el usuario.
 
 Cada metodo que se encarga de manipular los datos del sistema, posee una sentencia rescue y else para definir el mensaje a retornar, ya que puede darse el caso donde ocurra un error al ejecutar la operacion de creado,renombrado o borrado de un archivo, ejemplos de esto pueden ser la falta de permisos para escribir, entre otros.
 Además, se implementaron algunos metodos de los comandos de appointments en la clase profesional ya que tenia sentido que un profesional posea dicho comportamiento.
@@ -97,13 +147,13 @@ Para la implementacion de la clase se definió que como comportamiento de clase 
 
 Respecto a los atributos de la clase, se opto por el uso de un hash para guardar los detalles ya que el guardarlos de esta forma simplificaba la implementacion de varios metodos de la clase, como el guardar la informacion en un archivo, editar ciertos campos de un turno, etc.
 
-Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba mas coherente que un turno sea el responsable de manejar su persistencia en el sistema.
+Se mantuvo como comportamiento de las instancias de la clase lo relacionado a la logica de archivos, ya que resultaba más coherente que un turno sea el responsable de manejar su persistencia en el sistema.
 
-Además, a la hora de mostrar la informacion de un turno, se decidió el primero crear una instancia a partir del archivo en lugar de simplemente leerlo, ya que si en un futuro se decide hacer varias cosas con los datos del turno en un mismo metodo, solo es necesario leer el archivo una vez, y no leerlo cada vez que se muestren todos los detalles del turno, haciendolo mas eficiente en general.
+Además, a la hora de mostrar la informacion de un turno, se decidió el primero crear una instancia a partir del archivo en lugar de simplemente leerlo, ya que si en un futuro se decide hacer varias cosas con los datos del turno en un mismo metodo, solo es necesario leer el archivo una vez, y no leerlo cada vez que se muestren todos los detalles del turno, haciendolo más eficiente en general.
 
 Se incluyo tambien un metodo my_path que cumple una funcion parecida al metodo self.path del modulo Utils, ya que simplifica la escritura de la ruta absoluta a seguir a la hora de crear un turno, y se evita repetir codigo en grandes cantidades. 
 
-Al igual que la clase professionals, se decidió que los metodos que incluyeran manipulacion de los archivos contaran con un manejo de excepciones para el caso donde haya un error al ejecutar una operacion sobre el archivo, y devolver un mensaje de exito o fallo de forma similar a los codigos de error de lenguajes como C y bash, pero que a la vez sean mas amigables y explicativos para el usuario de la herramienta.
+Al igual que la clase professionals, se decidió que los metodos que incluyeran manipulacion de los archivos contaran con un manejo de excepciones para el caso donde haya un error al ejecutar una operacion sobre el archivo, y devolver un mensaje de exito o fallo de forma similar a los codigos de error de lenguajes como C y bash, pero que a la vez sean más amigables y explicativos para el usuario de la herramienta.
 
 Los siguientes metodos son comportamientos de la instancia de appointments:
 
