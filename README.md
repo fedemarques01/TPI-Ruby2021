@@ -12,13 +12,13 @@ Este apartado contempla las modificaciones que se le hicieron al codigo tanto pa
 
 ## Corecciones de la primer entrega
 
-Se modificaron distintos metodos para aplicar las corecciones que fueron marcadas en la primer entrega, la más importante es que se cambio el que los metodos retornasen un string como mensaje de exito o error, sino que ahora devuelven un metodo true o false dependiendo del resultado de la operacion realizada, y en base al resultado obtenido se genera un mensaje distinto en el modulo de comandos, ya que es el encargado de generar y mostrar los mensajes al usuario.
+Se modificaron distintos metodos para aplicar las corecciones que fueron marcadas en la primer entrega, la más importante es que se cambio el que los metodos retornasen un string como mensaje de exito o error, sino que ahora devuelven un booleano true o false dependiendo del resultado de la operacion realizada, y en base al resultado obtenido se genera un mensaje distinto en el modulo de comandos, ya que es el encargado de generar y mostrar los mensajes al usuario.
 
-Los metodos modificados son los metodos de creacion, edicion y borrado de archivos de los modulos de appointments y profesionals, asi como el metodo listar profesionales que devuelve un arreglo vacio y se actua en consecuencia a ese y en el modulo de Utils se modifico el metodo `check_options` para que devuelva un hash con los parametros recibidos que sean cadenas vacias, y se actua en el comando en base al contenido del hash.
+Los metodos modificados son los metodos de creacion, edicion y borrado de archivos de los modulos de appointments y profesionals, asi como el metodo `list_professionals` que devuelve un arreglo vacio y se actua en consecuencia a ese.En el modulo de Utils se modificó el metodo `check_options` para que devuelva un hash con los parametros recibidos que sean cadenas vacias, y se actua en los comandos donde se utiliza en base al contenido del hash.
 
 ## Los metodos list-all-day y list-all-week
 
-En el modelo de appointments, se agregaron las 2 nuevas funcionalidades solicitadas para esta entrega, se encuentran en el modelo de appointments como un metodo de clase, principalmente porque tenia sentido que el poder devolver todos los turnos de una fecha o semana particular sea un comportamiento correspondiente a la clase, este metodo reutiliza metodos ya implementados en la primer etapa de la entrega, generando un arreglo de turnos en el caso de un dia particular, y un hash con los turnos de cada dia de la semana.
+En el modelo de appointments, se agregaron las 2 nuevas funcionalidades solicitadas para esta entrega, se encuentran en el modelo de appointments como un metodo de clase, principalmente porque tenia sentido que el poder devolver todos los turnos de una fecha o semana particular sea un comportamiento correspondiente a la clase, este metodo reutiliza metodos ya implementados en la primer etapa de la entrega, generando un arreglo de turnos en el caso de un dia particular, y un hash con los turnos de cada dia de la semana para la segunda funcionalidad.
 
 ## Modificaciones del modulo Utils
 
@@ -30,7 +30,7 @@ Además, se implemento un metodo llamado `get_week_as_string` cuyo objetivo es r
 
 Tambien se agrego el metodo `report_path` que devuelve la ruta hacia la carpeta donde se guardan los documentos que se exportan
 
-## Conceciones respecto al formato de la grilla de turnos
+## Concesiones respecto al formato de la grilla de turnos
 
 Para generar las grillas de turnos, se tuvieron en cuenta las siguientes conseciones:
   - La grilla muestra informacion en bloques de duracion fija, estos bloques son de 30 minutos, cada turno no dura más de 30 minutos, es decir, que no se superpone con el turno siguiente.
@@ -52,6 +52,8 @@ Adicionalmente, se movio la logica de generacion del documento PDF a un nuevo mo
 Para el guardado de archivos en el modulo Export ,ya que es parte de la funcionalidad para exportar a un archivo pdf, se incorporaron metodos que generan el nombre del archivo en base al profesional buscado y la fecha a procesar, en el caso de una semana el nombre contendrá solo la fecha de inicio de la semana.
 
 Los grillas generadas son guardadas automaticamente en una nueva carpeta llamada .polycon-schedules, que en caso de no existir se crea. La ruta hacia esta carpeta es informada al usuario una vez que se ha generado la grilla, por lo que siempre se puede saber claramente donde estan guardados los pdfs generados.
+
+Los turnos de la grilla se muestran en el formato `Prof. nombre del profesional - Apellido y nombre del paciente`
 
 ## Nuevas dependencias
 
