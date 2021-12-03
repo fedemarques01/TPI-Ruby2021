@@ -1,10 +1,13 @@
-
 ## Introducción
 
 Este es una herramienta para gestionar la agenda de turnos de un policonsultorio, en el cual atienden profesionales de diferentes especialidades.
 
 Esta herramienta fue implementada como proyecto para el Taller de Tecnologias de Producción de Software Opcion Ruby
 de la Universidad Nacional de La Plata.
+
+## Instalacion de dependencias
+
+Una vez clonado el repositorio
 
 # Decisiones de diseño de la segunda entrega
 
