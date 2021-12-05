@@ -1,4 +1,4 @@
-<p id="notice" style="margin-top: 5%; margin-left:5%;"><%= notice %> :D</p>
+<p id="notice" style="margin-top: 5%; margin-left:5%;"><%= notice %></p>
 <h1 style="margin-left: 5%;font-size: 24px">Showing <%= @professional.to_s %> </h1>
 <div style=" margin-top: 10px; margin-left: 6%">
 <p style=" margin-bottom: 20px;">
@@ -11,6 +11,7 @@
   <%= @professional.surname %>
 </p>
 
-<%= link_to 'Edit', edit_professional_path(@professional), class: "button is-danger" ,style: "float: left;"%>
+<%= link_to 'Appointments', professional_appointments_path(@professional), class: "button is-danger" ,style: "float: left;" %>
+<%= link_to 'Edit', edit_professional_path(@professional), class: "button is-danger" ,style: "float: left; margin-left: 10px"%>
 <%= link_to 'Back', professionals_path, class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
 <div>

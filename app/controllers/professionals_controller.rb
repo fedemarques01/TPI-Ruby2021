@@ -24,7 +24,7 @@ class ProfessionalsController < ApplicationController
     @professional = Professional.new(professional_params)
 
     if @professional.save
-      redirect_to @professional, notice: 'Professional was successfully created.'
+      redirect_to @professional, notice: 'Professional was successfully created. :D'
     else
       render :new
     end
@@ -33,7 +33,7 @@ class ProfessionalsController < ApplicationController
   # PATCH/PUT /professionals/1
   def update
     if @professional.update(professional_params)
-      redirect_to @professional, notice: 'Professional was successfully updated.'
+      redirect_to @professional, notice: 'Professional was successfully updated. :D'
     else
       render :edit
     end
@@ -42,9 +42,9 @@ class ProfessionalsController < ApplicationController
   # DELETE /professionals/1
   def destroy
     if @professional.destroy
-      notice = 'Professional was successfully destroyed.'
+      notice = 'Professional was successfully destroyed. :D'
     else
-      notice = 'The selected professional has appointments.'
+      notice = 'The selected professional has appointments. D:'
     end
     redirect_to professionals_url, notice: notice
   end
