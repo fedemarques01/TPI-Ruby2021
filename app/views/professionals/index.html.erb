@@ -1,0 +1,30 @@
+<p id="notice" style="margin-top: 5%; margin-left:5%;"><%= notice %> :D</p>
+<h1 style="margin-left:5%; font-size:24px">Professionals</h1>
+<div style="margin-left: 6%">
+
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th colspan="3">Options</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @professionals.each do |professional| %>
+        <tr>
+          <td><%= professional.name %></td>
+          <td><%= professional.surname %></td>
+          <td><%= link_to 'Show', professional %></td>
+          <td><%= link_to 'Edit', edit_professional_path(professional) %></td>
+          <td><%= link_to 'Destroy', professional, method: :delete, data: { confirm: 'Are you sure you want to delete this professional?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= link_to 'New Professional', new_professional_path, class: "button is-danger" ,style: "float: left; margin-left:5%; margin-top:30px"%>
+
+
