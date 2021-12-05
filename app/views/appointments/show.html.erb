@@ -1,29 +1,32 @@
-<p id="notice"><%= notice %></p>
+<p id="notice" style="margin-top: 5%; margin-left:5%;"><%= notice %></p>
+<h1 style="margin-left: 5%;font-size: 24px">Showing appointment from <%= display_date(@appointment) %> of <%= @professional %></h1>
+<div style=" margin-top: 10px; margin-left: 6%">
 
-<p>
-  <strong>Date:</strong>
-  <%= @appointment.date %>
-</p>
+  <p style=" margin-bottom: 20px;">
+    <strong>Date:</strong>
+    <%= display_date(@appointment) %>
+  </p>
 
-<p>
-  <strong>Patient name:</strong>
-  <%= @appointment.patient_name %>
-</p>
+  <p style=" margin-bottom: 20px;">
+    <strong>Patient name:</strong>
+    <%= @appointment.patient_name %>
+  </p>
 
-<p>
-  <strong>Patient surname:</strong>
-  <%= @appointment.patient_surname %>
-</p>
+  <p style=" margin-bottom: 20px;">
+    <strong>Patient surname:</strong>
+    <%= @appointment.patient_surname %>
+  </p>
 
-<p>
-  <strong>Phone:</strong>
-  <%= @appointment.phone %>
-</p>
+  <p style=" margin-bottom: 20px;">
+    <strong>Phone:</strong>
+    <%= @appointment.phone %>
+  </p>
 
-<p>
-  <strong>Notes:</strong>
-  <%= @appointment.notes %>
-</p>
+  <p style=" margin-bottom: 20px;">
+    <strong>Notes:</strong>
+    <%= @appointment.notes %>
+  </p>
 
-<%= link_to 'Edit', edit_professional_appointment_path(@professional,@appointment) %> |
-<%= link_to 'Back', professional_appointments_path(@professional) %>
+  <%= link_to 'Edit', edit_professional_appointment_path(@professional,@appointment), class: "button is-danger" ,style: "float: left;" %>
+  <%= link_to 'Back', professional_appointments_path(@professional), class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
+</div>

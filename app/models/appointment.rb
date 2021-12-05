@@ -16,7 +16,9 @@ class Appointment < ApplicationRecord
   def hour_availability
     if date.present?
       existing_appointment = Appointment.where("date = ? and professional_id = ?", date.to_datetime, professional_id).first
-      errors.add(:date, " : The professional already has an appointment on that date and hour") unless existing_appointment.nil?
+      if existing_appointment
+        errors.add(:date, " : The professional already has an appointment on that date and hour") unless id == existing_appointment.id
+      end
     end
   end
 end

@@ -1,40 +1,42 @@
-<%= form_with(model: [professional, appointment]) do |form| %>
-  <% if appointment.errors.any? %>
-    <div id="error_explanation">
-      <ul>
-        <% appointment.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<div style="margin-left: 6%">
+  <%= form_with(model: [professional, appointment]) do |form| %>
+    <% if appointment.errors.any? %>
+      <div id="error_explanation">
+        <ul>
+          <% appointment.errors.each do |error| %>
+            <li><%= error.full_message %> !!</li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field column is-4">
+      <%= form.label :date, class: "label" %>
+      <%= form.datetime_select :date, {}, { class: "select" } %>
+    </div>
+
+    <div class="field column is-4">
+      <%= form.label :patient_name, class: "label" %>
+      <%= form.text_field :patient_name, class: "input" %>
+    </div>
+
+    <div class="field column is-4">
+      <%= form.label :patient_surname, class: "label" %>
+      <%= form.text_field :patient_surname, class: "input" %>
+    </div>
+
+    <div class="field column is-4">
+      <%= form.label :phone, class: "label" %>
+      <%= form.text_field :phone, class: "input" %>
+    </div>
+
+    <div class="field column is-4">
+      <%= form.label :notes, class: "label" %>
+      <%= form.text_area :notes, class: "textarea" %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit class: "button is-danger",style: "float: left; margin-left: 10px" %>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.label :date %>
-    <%= form.datetime_select :date %>
-  </div>
-
-  <div class="field">
-    <%= form.label :patient_name %>
-    <%= form.text_field :patient_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :patient_surname %>
-    <%= form.text_field :patient_surname %>
-  </div>
-
-  <div class="field">
-    <%= form.label :phone %>
-    <%= form.text_field :phone %>
-  </div>
-
-  <div class="field">
-    <%= form.label :notes %>
-    <%= form.text_area :notes %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>
