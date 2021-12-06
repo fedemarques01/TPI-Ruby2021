@@ -1,0 +1,21 @@
+<div style="margin-left:5%; margin-top:5%">
+
+    <% flash.each do |type, msg| %>
+        <div class="subtitle is-5 is-spaced">
+            <%= msg %>
+        </div>
+    <% end %>
+    <div>
+        <h1 class="title is-2 is-spaced">Welcome to Polycon!!</h1>
+
+        <h3 style="margin-left:1%" class="subtitle is-4 is-spaced">
+            With this page, you can manage information about professionals and their appointments.
+        </h3>
+
+        <%= link_to 'Professionals', professionals_path, class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
+        <%= link_to 'Users', users_path, class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
+        <%= link_to 'Quit', logout_path, method: "delete", class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
+    </div>
+    
+</div>
+
