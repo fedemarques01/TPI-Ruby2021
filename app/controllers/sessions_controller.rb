@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
 
   def destroy
     # Remove the user id from the session
-    @_current_user = session[:current_user_id] = nil
+    @_current_user = session[:user_id] = nil
     flash[:notice] = "Logged out successfully."
     redirect_to login_path
   end

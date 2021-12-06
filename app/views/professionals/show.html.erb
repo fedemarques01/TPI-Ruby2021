@@ -12,6 +12,8 @@
   </p>
 
   <%= link_to 'Appointments', professional_appointments_path(@professional), class: "button is-danger" ,style: "float: left;" %>
-  <%= link_to 'Edit', edit_professional_path(@professional), class: "button is-danger" ,style: "float: left; margin-left: 10px"%>
+  <% if loggedUserHasRole?("administracion") %>
+    <%= link_to 'Edit', edit_professional_path(@professional), class: "button is-danger" ,style: "float: left; margin-left: 10px"%>
+  <% end %>
   <%= link_to 'Back', professionals_path, class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
 </div>

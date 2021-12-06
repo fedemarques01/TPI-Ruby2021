@@ -22,14 +22,20 @@
           <td><%= appointment.phone %></td>
           <td><%= appointment.notes %></td>
           <td><%= link_to 'Show', [@professional,appointment] %></td>
-          <td><%= link_to 'Edit', edit_professional_appointment_path(@professional,appointment) %></td>
-          <td><%= link_to 'Cancel', [@professional,appointment], method: :delete, data: { confirm: 'Are you sure you want to cancel this appointment?' } %></td>
+          <% if ! loggedUserHasRole?("consulta") %>
+            <td><%= link_to 'Edit', edit_professional_appointment_path(@professional,appointment) %></td>
+            <td><%= link_to 'Cancel', [@professional,appointment], method: :delete, data: { confirm: 'Are you sure you want to cancel this appointment?' } %></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
-<%= link_to 'New Appointment', new_professional_appointment_path(@professional),class: "button is-danger" ,style: "float: left; margin-left:5%; margin-top:30px" %>
+<div style="margin-left:5%">
+<% if ! loggedUserHasRole?("consulta") %>
+  <%= link_to 'New Appointment', new_professional_appointment_path(@professional),class: "button is-danger" ,style: "float: left;margin-top:30px" %>
+<% end %>
 <%= link_to 'Back to professional', @professional,class: "button is-danger" ,style: "float: left; margin-left:10px; margin-top:30px" %>
 <%= link_to 'Go to home', root_path, class: "button is-danger" ,style: "float: left; margin-left:10px; margin-top:30px"%>
+</div>

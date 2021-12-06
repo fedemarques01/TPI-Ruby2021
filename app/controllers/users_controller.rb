@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :check_auth_and_role
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -54,5 +55,16 @@ class UsersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def user_params
       params.require(:user).permit(:username, :password, :password_confirmation,:role_id)
+    end
+
+    #Chequea que tenga rol admin y este logueado
+    def check_auth_and_role()
+      if session[:user_id].nil?
+        flash[:alert] = "You must be logged in to enter this page!!"
+        redirect_to login_path
+      elsif current_user.role.name != "administracion"
+        flash[:alert] = "You don't have permission to access to that URL!! You have been redirected to the home page"
+        redirect_to root_path
+      end 
     end
 end

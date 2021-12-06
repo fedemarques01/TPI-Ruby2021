@@ -1,4 +1,6 @@
 class AppointmentsController < ApplicationController
+  before_action :check_auth
+  before_action :check_role, only: [:edit, :update, :destroy]
   before_action :set_professional
   before_action :set_appointment, only: [:show, :edit, :update, :destroy]
 
@@ -59,4 +61,20 @@ class AppointmentsController < ApplicationController
     def appointment_params
       params.require(:appointment).permit(:date, :patient_name, :patient_surname, :phone, :notes)
     end
+
+    #Chequeo de autenticacion
+    def check_auth
+      if session[:user_id].nil?
+        flash[:alert] = "You must be logged in to enter this page!!"
+        redirect_to login_path
+      end
+    end
+    #Si su rol es consulta, no esta habilitado para editar o borrar turnos
+    def check_role
+      if current_user.role.name == "consulta"
+        flash[:alert] = "You don't have permission to access to that URL!! You have been redirected to the home page"
+        redirect_to root_path
+      end
+    end
+
 end

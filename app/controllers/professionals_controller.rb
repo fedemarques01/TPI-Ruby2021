@@ -1,4 +1,6 @@
 class ProfessionalsController < ApplicationController
+  before_action :check_auth
+  before_action :check_role, only: [:edit, :update, :destroy]
   before_action :set_professional, only: [:show, :edit, :update, :destroy]
 
   # GET /professionals
@@ -58,5 +60,20 @@ class ProfessionalsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def professional_params
       params.require(:professional).permit(:name, :surname)
+    end
+
+    #Chequeo de autenticacion
+    def check_auth
+      if session[:user_id].nil?
+        flash[:alert] = "You must be logged in to enter this page!!"
+        redirect_to login_path
+      end
+    end
+    #Chequeo de que sea admin para borrar y editar
+    def check_role
+      if current_user.role != "administracion"
+        flash[:alert] = "You don't have permission to access to that URL!! You have been redirected to the home page"
+        redirect_to root_path
+      end
     end
 end
