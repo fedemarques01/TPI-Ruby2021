@@ -23,7 +23,7 @@ class ExportController < ApplicationController
 
       #cargo el hash con los appointments de cada dia
       AppointmentsUtils.get_appointments_per_day(week,appointments)
-      send_data Export.export_pdf(week), filename:'schedule_professional.pdf', type: "application/pdf", disposition: :attachment
+      send_data Export.export_pdf(week), filename:'schedule_.pdf', type: "application/pdf", disposition: :attachment
     else
       render 'export_all'
     end

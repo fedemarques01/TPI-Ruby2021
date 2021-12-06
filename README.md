@@ -5,9 +5,100 @@ Este es una herramienta para gestionar la agenda de turnos de un policonsultorio
 Esta herramienta fue implementada como proyecto para el Taller de Tecnologias de Producción de Software Opcion Ruby
 de la Universidad Nacional de La Plata.
 
-## Instalacion de dependencias
+### Instalación de dependencias
 
-Una vez clonado el repositorio
+Este proyecto utiliza Bundler para manejar sus dependencias. Bundle se encarga de instalar las dependencias ( gemas ) del archivo gemfile al ejecutar el comando:
+
+```bash
+$ bundle install
+```
+
+> Nota: Bundler debería estar disponible en tu instalación de Ruby, pero si por algún
+> motivo al intentar ejecutar el comando `bundle` obtenés un error indicando que no se
+> encuentra el comando, podés instalarlo mediante el siguiente comando:
+>
+> ```bash
+> $ gem install bundler
+> ```
+
+### Pasos para utilizar la aplicacion
+
+1. Instalar rails, puede hacerse con el siguiente comando:
+
+```bash
+$ gem install rails
+```
+
+2. Actualizar las dependencias, esto se hace mediante bundle install
+
+```bash
+$ bundle install
+```
+
+3. Ejecutar las migraciones, esto generara la estructura de la base de datos que necesitara la pagina. Puede hacerse mediante el comando
+
+```bash
+$ rails db:migrate
+```
+
+4. Ejecutar el seed, este comando lo que hará sera crear unos datos de prueba para la base de datos. La misma contiene:
+ .3 usuarios de prueba
+ .3 profesionales
+ .Luego se asignan entre 5 y 10 turnos a los profesionales elegidos al azar. Los datos de estos turnos son genericos
+
+ Comando:
+
+ ```bash
+$ rails db:seed
+```   
+5. Las credenciales para iniciar sesion con cada uno de los usuarios son:
+
+> ADMINISTRACION: 
+>         Usuario: admin, contraseña: admin123
+>
+> ASISTENCIA:
+>         Usuario: asistente, contraseña: asistente123
+>
+> CONSULTA:
+>         Usuario: consultor, contraseña: consultor123
+
+6. Ejecutar la aplicacion rails de manera local en tu pc
+
+```bash
+$ rails server
+```
+
+7. Por defecto, la aplicacion estará corriendo en el servidor http:127.0.0.1:3000
+
+8. Permisos de los usuarios
+
+> ADMINISTRACION: Puede crear editar, ver y eliminar usuarios, profesionales y turnos. Tambien puede exportar grillas de turnos.
+
+> ASISTENCIA: Puede gestionar los turnos, pero no puede ver los usuarios, y tampoco puede eliminar y editar profesionales. Puede tambien exportar grillas de turnos
+
+> CONSULTA: Puede ver los turnos y profesionales, pero no puede editar ni eliminar nada. Tambien tiene disponible la opcion de exportar grillas de turnos.
+
+
+# Decisiones de diseño de la tercer entrega
+
+  Para la autenticacion, manejo de permisos y de sesiones de los usuarios se utilizo la gema bcrypt, esta gema ya viene en el gemfile de la app rails pero comentada. Presenta utilidad para la autenticacion ya que posee un metodo para ello y a su vez provee encriptado de contraseñas automatico, dandole una capa de seguridad a la bd.
+
+  Para el manejo de permisos se opto por verificar que los usuarios posean el rol permitido a la hora de ejecutar ciertas acciones, (como una baja o una edicion). Además, se definieron un par de helpers para el determinar que botones se muestran en el html segun el rol del usuario.
+
+  En cuanto a las validaciones de turnos:
+
+  - Los turnos solo son validos dentro del rango de 9 a 19:30hs y solo son validos a su vez aquellos que tienen el minuto 0 o 30. Esto esta hecho de esta manera para respetar el horario de la grilla de turnos y de los bloques de tiempo de la misma.
+  - En el campo telefono de un turno solo deben ingresarse numeros.
+  - Además, no pueden haber 2 turnos para un mismo profesional a la misma hora.
+  - Respecto a los profesionales, no se añadió ninguna validacion a la hora de crearlos, ya que al poseer solo el nombre y apellido y el hecho de que un nombre y apellido no suele ser unico, se permitió la carga de profesionales
+  con mismo nombre y apellido. Sin embargo, si se presenta una validacion a la hora de eliminarlos, ya que en caso de tener turnos asignados no podrá ser eliminado.
+  - Los usuarios de la aplicacion tienen un nombre de usuario unico y su contraseña debe ser de al menos 8 caracteres.
+
+  En cuanto a los estilos de la aplicacion, se añadieron unos estilos basicos mediante el uso del framework css bulma, no son estilos muy trabajados pero estan con el proposito de que el contenido de la aplicacion se vea menos "crudo".
+
+  Para exportar las planillas de turnos de los profesionales se utilizaron las mismas gemas que en la entrega pasada, siendo estas prawn y prawn-table. El modulo Export que anterioirmente se encontraba en la carpeta polycon fue ubicado en la carpeta services, dentro del sub-directorio app de la aplicacion rails. Tambien fue adecuado a las corecciones de la entrega anterior, excepto por el generar una lista de horarios del policonsultorio de forma mas programatica.
+
+  Para la base de datos de la aplicacion se utilizo SQLite, principalmente debido a que como el tamaño en general que posee la pagina web es relativamente poco, la perdida de performance al tenes qees algo aceptable con el fin de no perder tanto tiempo 
 
 # Decisiones de diseño de la segunda entrega
 
@@ -184,61 +275,9 @@ Al igual que professionals, esta hecho de forma que la funcion del comando llame
 A continuacion estan el uso de la herramienta y la instalacion de dependencias de la misma originales del template provisto, ya que son de utilidad para aquellos usuarios que quieran usar la herramienta y no sepan como poder usarla.
 
 
-## Uso de `polycon`
-
-Para ejecutar el comando principal de la herramienta se utiliza el script `bin/polycon`,
-el cual puede correrse de las siguientes manera:
-
-```bash
-$ ruby bin/polycon [args]
-```
-
-O bien:
-
-```bash
-$ bundle exec bin/polycon [args]
-```
-
-O simplemente:
-
-```bash
-$ bin/polycon [args]
-```
-
-Si se agrega el directorio `bin/` del proyecto a la variable de ambiente `PATH` de la shell,
-el comando puede utilizarse sin prefijar `bin/`:
-
-```bash
-# Esto debe ejecutarse estando ubicad@ en el directorio raiz del proyecto, una única vez
-# por sesión de la shell
-$ export PATH="$(pwd)/bin:$PATH"
-$ polycon [args]
-```
-
 > Notá que para la ejecución de la herramienta, es necesario tener una versión reciente de
 > Ruby (2.6 o posterior) y tener instaladas sus dependencias, las cuales se manejan con
 > Bundler. Para más información sobre la instalación de las dependencias, consultar la
 > siguiente sección ("Desarrollo").
 
-### Instalación de dependencias
 
-Este proyecto utiliza Bundler para manejar sus dependencias. Si aún no sabés qué es eso
-o cómo usarlo, no te preocupes: ¡lo vamos a ver en breve en la materia! Mientras tanto,
-todo lo que necesitás saber es que Bundler se encarga de instalar las dependencias ("gemas")
-que tu proyecto tenga declaradas en su archivo `Gemfile` al ejecutar el siguiente comando:
-
-```bash
-$ bundle install
-```
-
-> Nota: Bundler debería estar disponible en tu instalación de Ruby, pero si por algún
-> motivo al intentar ejecutar el comando `bundle` obtenés un error indicando que no se
-> encuentra el comando, podés instalarlo mediante el siguiente comando:
->
-> ```bash
-> $ gem install bundler
-> ```
-
-Una vez que la instalación de las dependencias sea exitosa (esto deberías hacerlo solamente
-cuando estés comenzando con la utilización del proyecto), podés comenzar a probar la
-herramienta y a desarrollar tu entrega.
