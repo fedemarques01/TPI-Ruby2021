@@ -1,0 +1,24 @@
+<div style="margin-left: 6%">
+    <%= form_with(url: url, method: 'get', local: true, scope: :export) do |form| %>
+        <% flash.each do |type, msg| %>
+                <div class="column is-6">
+                    <%= msg %>
+                </div>
+            <% end %>
+        <div class="field column is-4">
+            <%= form.label "Date", class:"label" %> format YYYY-MM-DD
+            <%= form.text_field :date,
+                data: {controller: "flatpickr", flatpickr_date_format: "Y-m-d"}, class:"input" %>
+        </div>
+
+        <div class="field column is-4">
+            <%= form.label "Grilla semanal", class: "label" %>
+            <%= form.check_box :week %>
+        </div>
+
+        
+        <div class="actions">
+            <%= form.submit "Generar grilla",class: "button is-danger",style: "float: left; margin-left: 10px" %>
+        </div>
+    <% end %>
+</div>

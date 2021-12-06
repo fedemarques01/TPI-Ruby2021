@@ -36,6 +36,7 @@
 <% if ! loggedUserHasRole?("consulta") %>
   <%= link_to 'New Appointment', new_professional_appointment_path(@professional),class: "button is-danger" ,style: "float: left;margin-top:30px" %>
 <% end %>
+<%= link_to 'Export Appointments', professional_export_appointments_path(@professional), class: "button is-danger" ,style: "float: left; margin-left:10px; margin-top:30px"%>
 <%= link_to 'Back to professional', @professional,class: "button is-danger" ,style: "float: left; margin-left:10px; margin-top:30px" %>
 <%= link_to 'Go to home', root_path, class: "button is-danger" ,style: "float: left; margin-left:10px; margin-top:30px"%>
 </div>

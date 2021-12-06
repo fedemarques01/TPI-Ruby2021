@@ -21,4 +21,9 @@ class Appointment < ApplicationRecord
       end
     end
   end
+
+  #devuelve info del turno en un formato apto para grillas
+  def schedule_format()
+    "Prof. #{professional} - #{patient_surname} #{patient_name}"
+  end
 end
