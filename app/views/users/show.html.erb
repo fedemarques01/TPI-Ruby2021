@@ -1,0 +1,17 @@
+<p id="notice" style="margin-top: 5%; margin-left:5%;"><%= notice %></p>
+<h1 style="margin-left: 5%;font-size: 24px">Showing <%= @user.username %> </h1>
+<div style=" margin-top: 10px; margin-left: 6%">
+
+  <p style=" margin-bottom: 20px;">
+    <strong>Username:</strong>
+    <%= @user.username %>
+  </p>
+
+  <p style=" margin-bottom: 20px;">
+    <strong>Role:</strong>
+    <%= @user.role %>
+  </p>
+
+  <%= link_to 'Edit', edit_user_path(@user), class: "button is-danger" ,style: "float: left; margin-left: 10px" %>
+  <%= link_to 'Back', users_path, class: "button is-danger" ,style: "float: left; margin-left: 10px"%>
+</div>
